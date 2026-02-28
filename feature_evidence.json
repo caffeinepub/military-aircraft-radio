@@ -1,0 +1,50 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-redesign-the-entire-frontend-ui-to-be-minimalist-remove-all-purely-decorative-elements-including-scanlines-gauge-widgets-gaugewidget-tsx-grid-overlays-corner-bracket-decorations-and-vignette-effects-from-hudlayout-strip-forced-military-jargon-labels-e-g-tactical-mission-briefing-intel-from-all-components-retain-the-dark-color-palette-and-subtle-aircraft-themed-language-only-where-it-serves-a-real-functional-purpose-e-g-app-title-button-labels-station-status-all-content-must-fit-in-a-single-mobile-viewport-without-scrolling",
+      "featureTitle": "Redesign the entire frontend UI to be minimalist: remove all purely decorative elements including scanlines, gauge widgets (GaugeWidget.tsx), grid overlays, corner bracket decorations, and vignette effects from HUDLayout. Strip forced military jargon labels (e.g., 'TACTICAL', 'MISSION BRIEFING', 'INTEL') from all components. Retain the dark color palette and subtle aircraft-themed language only where it serves a real functional purpose (e.g., app title, button labels, station status). All content must fit in a single mobile viewport without scrolling.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/AppHeader.tsx",
+        "frontend/src/components/GaugeWidget.tsx",
+        "frontend/src/components/HUDLayout.tsx",
+        "frontend/src/components/NowPlayingPanel.tsx",
+        "frontend/src/components/SearchPanel.tsx",
+        "frontend/src/components/StationList.tsx",
+        "frontend/src/index.css",
+        "frontend/tailwind.config.js"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-7"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-repurpose-the-radarwidget-as-a-minimal-functional-ux-indicator-rather-than-a-decorative-animation-the-radar-should-convey-real-application-state-for-example-a-slow-sweep-when-idle-searching-a-faster-sweep-or-active-blip-when-a-station-is-loading-or-playing-and-a-static-dimmed-state-when-stopped-or-in-error-position-it-compactly-e-g-small-corner-element-or-inline-within-the-now-playing-area-so-it-does-not-dominate-the-layout-but-provides-at-a-glance-feedback",
+      "featureTitle": "Repurpose the RadarWidget as a minimal, functional UX indicator rather than a decorative animation. The radar should convey real application state — for example, a slow sweep when idle/searching, a faster sweep or active blip when a station is loading or playing, and a static/dimmed state when stopped or in error. Position it compactly (e.g., small corner element or inline within the now-playing area) so it does not dominate the layout but provides at-a-glance feedback.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/RadarWidget.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-8"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

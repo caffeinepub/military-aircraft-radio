@@ -1,0 +1,113 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 5,
+  "summary": "Military aircraft-themed radio player web app with a minimalist cockpit-inspired interface. Single mobile view, dark color palette, no decorative-only elements (no scanlines, radar animations, gauge widgets, grid overlays, or corner brackets). Forced military jargon removed, but functional elements (buttons, labels, app title) retain subtle aircraft theming. Radar retained as a minimal, functional UX element (e.g., signal/loading state indicator). Uses Radio Browser API for free streaming stations worldwide. Features include genre/country search, favorites/bookmarks, and a clean now-playing display.",
+  "architectural_notes": [
+    "Use Radio Browser API (https://www.radio-browser.info/) for fetching free streaming station data",
+    "UI redesign: minimalist single mobile view — remove scanlines, radar sweep animations, gauge widgets, grid overlays, corner brackets, and forced military jargon (e.g. 'TACTICAL', 'MISSION BRIEFING'). Keep dark palette and subtle aircraft theming on functional elements. Radar retained as a minimal functional UX indicator (signal/loading state)."
+  ],
+  "known_issues": [],
+  "isFixRequest": false,
+  "existing_features": [
+    {
+      "id": "feature-implement-a-cockpit-hud-style-visual-theme-throughout-the-entire-application-dark-tactical-background-with-green-amber-phosphor-style-text-scanline-overlays-radar-sweep-animations-altimeter-speed-gauge-widgets-grid-overlays-and-corner-bracket-decorations-reminiscent-of-a-fighter-jet-heads-up-display-apply-this-theme-consistently-across-all-ui-components",
+      "title": "Implement a cockpit/HUD-style visual theme throughout the entire application: dark tactical background with green/amber phosphor-style text, scanline overlays, radar sweep animations, altimeter/speed gauge widgets, grid overlays, and corner bracket decorations reminiscent of a fighter jet heads-up display. Apply this theme consistently across all UI components.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-integrate-with-the-radio-browser-api-https-www-radio-browser-info-to-fetch-and-stream-free-radio-stations-worldwide-fetch-station-lists-using-the-public-json-endpoints-e-g-https-de1-api-radio-browser-info-json-stations-play-station-audio-streams-directly-in-the-browser-using-an-html5-audio-element",
+      "title": "Integrate with the Radio Browser API (https://www.radio-browser.info/) to fetch and stream free radio stations worldwide. Fetch station lists using the public JSON endpoints (e.g., https://de1.api.radio-browser.info/json/stations). Play station audio streams directly in the browser using an HTML5 audio element.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-station-search-functionality-allowing-users-to-filter-stations-by-genre-tag-and-by-country-using-inputs-that-query-the-radio-browser-api-search-endpoints",
+      "title": "Implement station search functionality allowing users to filter stations by genre (tag) and by country using inputs that query the Radio Browser API search endpoints.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-favorites-bookmarks-feature-allowing-users-to-save-and-remove-favorite-stations-persist-favorites-in-the-motoko-backend-so-they-survive-page-refreshes",
+      "title": "Implement a favorites/bookmarks feature allowing users to save and remove favorite stations. Persist favorites in the Motoko backend so they survive page refreshes.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-mission-briefing-style-now-playing-display-panel-that-shows-the-currently-playing-station-s-name-country-genre-tags-bitrate-and-codec-in-a-military-dossier-intel-report-style-layout-with-tactical-labels-and-formatting",
+      "title": "Implement a mission-briefing-style now-playing display panel that shows the currently playing station's name, country, genre tags, bitrate, and codec in a military dossier/intel-report style layout with tactical labels and formatting.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-generate-and-use-a-custom-app-logo-image-styled-as-a-military-aircraft-silhouette-top-down-view-of-a-fighter-jet-rendered-in-a-tactical-green-on-dark-color-scheme-suitable-for-use-as-the-app-header-logo",
+      "title": "Generate and use a custom app logo image styled as a military aircraft silhouette (top-down view of a fighter jet) rendered in a tactical green-on-dark color scheme, suitable for use as the app header logo.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-redesign-the-entire-frontend-ui-to-be-minimalist-remove-all-purely-decorative-elements-including-scanlines-gauge-widgets-gaugewidget-tsx-grid-overlays-corner-bracket-decorations-and-vignette-effects-from-hudlayout-strip-forced-military-jargon-labels-e-g-tactical-mission-briefing-intel-from-all-components-retain-the-dark-color-palette-and-subtle-aircraft-themed-language-only-where-it-serves-a-real-functional-purpose-e-g-app-title-button-labels-station-status-all-content-must-fit-in-a-single-mobile-viewport-without-scrolling",
+      "title": "Redesign the entire frontend UI to be minimalist: remove all purely decorative elements including scanlines, gauge widgets (GaugeWidget.tsx), grid overlays, corner bracket decorations, and vignette effects from HUDLayout. Strip forced military jargon labels (e.g., 'TACTICAL', 'MISSION BRIEFING', 'INTEL') from all components. Retain the dark color palette and subtle aircraft-themed language only where it serves a real functional purpose (e.g., app title, button labels, station status). All content must fit in a single mobile viewport without scrolling.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-repurpose-the-radarwidget-as-a-minimal-functional-ux-indicator-rather-than-a-decorative-animation-the-radar-should-convey-real-application-state-for-example-a-slow-sweep-when-idle-searching-a-faster-sweep-or-active-blip-when-a-station-is-loading-or-playing-and-a-static-dimmed-state-when-stopped-or-in-error-position-it-compactly-e-g-small-corner-element-or-inline-within-the-now-playing-area-so-it-does-not-dominate-the-layout-but-provides-at-a-glance-feedback",
+      "title": "Repurpose the RadarWidget as a minimal, functional UX indicator rather than a decorative animation. The radar should convey real application state — for example, a slow sweep when idle/searching, a faster sweep or active blip when a station is loading or playing, and a static/dimmed state when stopped or in error. Position it compactly (e.g., small corner element or inline within the now-playing area) so it does not dominate the layout but provides at-a-glance feedback.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Cockpit/HUD-style visual interface with radar displays, tactical overlays, and gauges",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Radio Browser API integration for streaming free stations worldwide",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Search stations by genre and country",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Favorites/bookmarks for stations",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Mission-briefing-style now-playing display",
+      "reqIds": [],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "Military Aircraft Radio",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

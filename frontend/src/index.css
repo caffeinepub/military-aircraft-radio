@@ -1,0 +1,152 @@
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;500;600;700;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --radius: 0.125rem;
+    --background: 0.1 0.012 145;
+    --foreground: 0.85 0.12 145;
+    --card: 0.13 0.015 145;
+    --card-foreground: 0.85 0.12 145;
+    --popover: 0.15 0.018 145;
+    --popover-foreground: 0.85 0.12 145;
+    --primary: 0.72 0.18 145;
+    --primary-foreground: 0.08 0.01 145;
+    --secondary: 0.18 0.022 145;
+    --secondary-foreground: 0.72 0.18 145;
+    --muted: 0.16 0.014 145;
+    --muted-foreground: 0.45 0.08 145;
+    --accent: 0.65 0.22 145;
+    --accent-foreground: 0.08 0.01 145;
+    --destructive: 0.55 0.22 25;
+    --destructive-foreground: 0.98 0 0;
+    --border: 0.25 0.055 145;
+    --input: 0.18 0.035 145;
+    --ring: 0.72 0.18 145;
+    --chart-1: 0.72 0.18 145;
+    --chart-2: 0.65 0.2 80;
+    --chart-3: 0.6 0.18 200;
+    --chart-4: 0.7 0.2 60;
+    --chart-5: 0.65 0.22 25;
+    --sidebar: 0.12 0.014 145;
+    --sidebar-foreground: 0.85 0.12 145;
+    --sidebar-primary: 0.72 0.18 145;
+    --sidebar-primary-foreground: 0.08 0.01 145;
+    --sidebar-accent: 0.18 0.022 145;
+    --sidebar-accent-foreground: 0.72 0.18 145;
+    --sidebar-border: 0.25 0.055 145;
+    --sidebar-ring: 0.72 0.18 145;
+
+    /* HUD tokens */
+    --hud-green: oklch(0.72 0.22 145);
+    --hud-green-dim: oklch(0.42 0.12 145);
+    --hud-green-bright: oklch(0.88 0.26 145);
+    --hud-amber: oklch(0.75 0.18 80);
+    --hud-amber-dim: oklch(0.5 0.12 80);
+    --hud-bg: oklch(0.1 0.012 145);
+    --hud-panel: oklch(0.13 0.015 145);
+    --hud-border: oklch(0.25 0.055 145);
+    --hud-glow: 0 0 6px oklch(0.72 0.22 145 / 0.5);
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Share Tech Mono', monospace;
+    background-color: var(--hud-bg);
+    overflow-x: hidden;
+  }
+}
+
+@layer utilities {
+  .hud-text {
+    color: var(--hud-green);
+    text-shadow: var(--hud-glow);
+  }
+
+  .hud-text-bright {
+    color: var(--hud-green-bright);
+    text-shadow: 0 0 8px oklch(0.72 0.22 145 / 0.6);
+  }
+
+  .hud-text-dim {
+    color: var(--hud-green-dim);
+  }
+
+  .hud-text-amber {
+    color: var(--hud-amber);
+  }
+
+  .hud-panel {
+    background-color: var(--hud-panel);
+    border: 1px solid var(--hud-border);
+  }
+
+  .font-orbitron {
+    font-family: 'Orbitron', sans-serif;
+  }
+
+  .station-row-active {
+    background: oklch(0.72 0.22 145 / 0.1);
+    border-left: 2px solid var(--hud-green);
+  }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@keyframes signal-bar {
+  0%, 100% { transform: scaleY(0.3); }
+  50% { transform: scaleY(1); }
+}
+
+.animate-blink {
+  animation: blink 1s step-end infinite;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--hud-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--hud-border);
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--hud-green-dim);
+}
+
+/* Input overrides */
+input, select, textarea {
+  background-color: oklch(0.13 0.015 145) !important;
+  color: var(--hud-green) !important;
+  border-color: var(--hud-border) !important;
+  font-family: 'Share Tech Mono', monospace !important;
+  border-radius: 0 !important;
+}
+
+input::placeholder {
+  color: var(--hud-green-dim) !important;
+  opacity: 0.5;
+}
+
+input:focus, select:focus {
+  outline: none !important;
+  border-color: var(--hud-green) !important;
+  box-shadow: 0 0 6px oklch(0.72 0.22 145 / 0.3) !important;
+}
