@@ -1,4 +1,24 @@
 {
   "kind": "feature_evidence_report",
-  "features": []
+  "features": [
+    {
+      "featureId": "feature-update-the-app-title-displayed-in-the-header-to-read-situation-monitor-radio-in-all-places-where-the-app-name-appears-appheader-tsx-page-title-and-any-other-visible-instances",
+      "featureTitle": "Update the app title displayed in the header to read 'SITUATION MONITOR RADIO' in all places where the app name appears (AppHeader.tsx, page title, and any other visible instances).",
+      "files": [
+        "frontend/index.html",
+        "frontend/src/components/AppHeader.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-14"
+      ],
+      "confidence": "high"
+    }
+  ]
 }

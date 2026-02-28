@@ -1,21 +1,37 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-28T23:33:20.293Z",
+  "generatedAt": "2026-02-28T23:40:35.474Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 0,
-    "implemented": 0,
-    "items": []
+    "total": 1,
+    "implemented": 1,
+    "items": [
+      {
+        "id": "REQ-14",
+        "summary": "Update the app title displayed in the header to read 'SITUATION MONITOR RADIO' in all places where the app name appears (AppHeader.tsx, page title, and any other visible instances).",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/AppHeader.tsx",
+          "frontend/index.html"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/AppHeader.tsx",
+          "frontend/index.html"
+        ]
+      }
+    ]
   },
   "changedFiles": [
-    "backend/main.mo",
     "build-request.json",
     "feature_evidence.json",
+    "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
+    "frontend/index.html",
+    "frontend/src/components/AppHeader.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

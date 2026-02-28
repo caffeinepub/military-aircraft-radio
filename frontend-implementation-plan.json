@@ -1,6 +1,28 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Deploy application to Internet Computer network",
-  "requirements": []
+  "title": "Update app title to SITUATION MONITOR RADIO",
+  "requirements": [
+    {
+      "id": "REQ-14",
+      "summary": "Update the app title displayed in the header to read 'SITUATION MONITOR RADIO' in all places where the app name appears",
+      "acceptanceCriteria": [
+        "The AppHeader displays 'SITUATION MONITOR RADIO' as the app title",
+        "No other app name variants (e.g., 'Squadron Radio') appear anywhere in the UI",
+        "The browser tab title (document title / index.html) also reflects 'SITUATION MONITOR RADIO'"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/AppHeader.tsx",
+          "operation": "modify",
+          "description": "Update the app title text from 'Squadron Radio' (or current value) to 'SITUATION MONITOR RADIO' in the header component. Ensure the title is prominently displayed and any logo text or branding elements reflect the new name."
+        },
+        {
+          "path": "frontend/index.html",
+          "operation": "modify",
+          "description": "Update the <title> tag in the HTML document head to 'SITUATION MONITOR RADIO' so the browser tab displays the correct app name."
+        }
+      ]
+    }
+  ]
 }

@@ -31,12 +31,12 @@ export function AppHeader({
         <div className="flex items-center gap-2 flex-1 min-w-0">
           <img
             src="/assets/generated/fighter-jet-logo.dim_256x256.png"
-            alt="Squadron Radio"
+            alt="Situation Monitor Radio"
             className="w-7 h-7 object-contain shrink-0"
             style={{ filter: 'drop-shadow(0 0 4px oklch(0.72 0.22 145 / 0.6)) brightness(1.1)' }}
           />
           <h1 className="font-doto font-black text-sm hud-text-bright tracking-widest leading-none truncate">
-            SQUADRON RADIO
+            SITUATION MONITOR RADIO
           </h1>
         </div>
 

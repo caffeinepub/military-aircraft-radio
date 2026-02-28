@@ -1,13 +1,14 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 9,
-  "summary": "Military aircraft-themed radio player web app with a minimalist cockpit-inspired interface (Dieter Rams × Military aesthetic). Single mobile view, dark color palette, Doto font applied selectively. Functional elements retain subtle aircraft theming. Audio-reactive visuals using Web Audio API (frequency-based visualizer integrated with radar indicator). Bottom toolbar with centered play/pause, dark mode toggle, and meatball menu. Radio Browser API for free streaming stations worldwide. Features include genre/country search, favorites/bookmarks, now-playing display, network resilience (auto-reconnect/retry), and station persistence (localStorage).",
+  "projectStateVersion": 11,
+  "summary": "Military aircraft-themed radio player web app with a minimalist cockpit-inspired interface (Dieter Rams × Military aesthetic). Single mobile view, dark color palette, Doto font applied selectively. Functional elements retain subtle aircraft theming. Audio-reactive visuals using Web Audio API (frequency-based visualizer integrated with radar indicator). Bottom toolbar with centered play/pause, dark mode toggle, and meatball menu. Radio Browser API for free streaming stations worldwide. Features include genre/country search, favorites/bookmarks, now-playing display, network resilience (auto-reconnect/retry), and station persistence (localStorage). App title is 'SITUATION MONITOR RADIO'.",
   "architectural_notes": [
     "Use Radio Browser API (https://www.radio-browser.info/) for fetching free streaming station data",
     "UI redesign: minimalist single mobile view — remove scanlines, radar sweep animations, gauge widgets, grid overlays, corner brackets, and forced military jargon (e.g. 'TACTICAL', 'MISSION BRIEFING'). Keep dark palette and subtle aircraft theming on functional elements. Radar retained as a minimal functional UX indicator (signal/loading state).",
     "Use Web Audio API for audio-reactive visuals; radar pulse/sweep reacts to audio amplitude, frequency bars render in now-playing area",
     "Doto font applied selectively to station name and key headings only",
-    "Bottom toolbar: single-row with centered play/pause, dark mode toggle, and meatball menu"
+    "Bottom toolbar: single-row with centered play/pause, dark mode toggle, and meatball menu",
+    "App title/name is 'SITUATION MONITOR RADIO'"
   ],
   "known_issues": [],
   "isFixRequest": false,
@@ -113,6 +114,14 @@
       "title": "Persist the last-played station to localStorage in useRadioPlayer.ts or App.tsx. On page reload, read the saved station from localStorage and restore it as the selected station (pre-populated in the now-playing panel) without auto-playing audio (wait for explicit user interaction).",
       "reqIds": [
         "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-app-title-displayed-in-the-header-to-read-situation-monitor-radio-in-all-places-where-the-app-name-appears-appheader-tsx-page-title-and-any-other-visible-instances",
+      "title": "Update the app title displayed in the header to read 'SITUATION MONITOR RADIO' in all places where the app name appears (AppHeader.tsx, page title, and any other visible instances).",
+      "reqIds": [
+        "REQ-14"
       ],
       "version": 1
     }
