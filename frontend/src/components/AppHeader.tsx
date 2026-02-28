@@ -8,6 +8,7 @@ interface AppHeaderProps {
   onViewChange: (view: 'stations' | 'favorites') => void;
   favoritesCount: number;
   playbackState: PlaybackState;
+  amplitude: number;
   searchOpen: boolean;
   onSearchToggle: () => void;
   hasActiveSearch: boolean;
@@ -18,6 +19,7 @@ export function AppHeader({
   onViewChange,
   favoritesCount,
   playbackState,
+  amplitude,
   searchOpen,
   onSearchToggle,
   hasActiveSearch,
@@ -33,13 +35,13 @@ export function AppHeader({
             className="w-7 h-7 object-contain shrink-0"
             style={{ filter: 'drop-shadow(0 0 4px oklch(0.72 0.22 145 / 0.6)) brightness(1.1)' }}
           />
-          <h1 className="font-orbitron font-black text-sm hud-text-bright tracking-widest leading-none truncate">
+          <h1 className="font-doto font-black text-sm hud-text-bright tracking-widest leading-none truncate">
             SQUADRON RADIO
           </h1>
         </div>
 
-        {/* Radar — compact state indicator */}
-        <RadarWidget size={36} playbackState={playbackState} />
+        {/* Radar — audio-reactive state indicator */}
+        <RadarWidget size={36} playbackState={playbackState} amplitude={amplitude} />
 
         {/* Search toggle */}
         <button

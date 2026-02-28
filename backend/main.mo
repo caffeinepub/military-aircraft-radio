@@ -3,6 +3,7 @@ import Text "mo:core/Text";
 import Principal "mo:core/Principal";
 import Array "mo:core/Array";
 
+// No changes needed, no empty migration required
 actor {
   type Station = {
     name : Text;

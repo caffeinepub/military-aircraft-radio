@@ -1,11 +1,12 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { AppHeader } from './components/AppHeader';
-import { RadarWidget } from './components/RadarWidget';
 import { NowPlayingPanel } from './components/NowPlayingPanel';
 import { SearchPanel } from './components/SearchPanel';
 import { StationList } from './components/StationList';
+import { BottomToolbar } from './components/BottomToolbar';
 import { useRadioPlayer } from './hooks/useRadioPlayer';
+import { useTheme } from './hooks/useTheme';
 import { useGetFavorites, useAddFavorite, useRemoveFavorite, toBackendStation } from './hooks/useQueries';
 import { fetchTopStations, searchStations, RadioStation } from './services/radioBrowserApi';
 
@@ -15,11 +16,41 @@ export default function App() {
   const [activeView, setActiveView] = useState<ActiveView>('stations');
   const [searchParams, setSearchParams] = useState({ tag: '', country: '', name: '' });
   const [searchOpen, setSearchOpen] = useState(false);
+  const [amplitude, setAmplitude] = useState(0);
 
   const player = useRadioPlayer();
+  const { theme, toggleTheme } = useTheme();
   const { data: favorites = [], isLoading: favoritesLoading } = useGetFavorites();
   const addFavoriteMutation = useAddFavorite();
   const removeFavoriteMutation = useRemoveFavorite();
+
+  const animFrameRef = useRef<number>(0);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+
+  // Keep analyser ref in sync
+  useEffect(() => {
+    analyserRef.current = player.analyserNode;
+  }, [player.analyserNode]);
+
+  // Continuously read amplitude from analyser for radar reactivity
+  useEffect(() => {
+    function tick() {
+      const analyser = analyserRef.current;
+      if (analyser && player.playbackState === 'playing') {
+        const data = new Uint8Array(analyser.frequencyBinCount);
+        analyser.getByteFrequencyData(data);
+        let sum = 0;
+        for (let i = 0; i < data.length; i++) sum += data[i];
+        const avg = sum / data.length / 255;
+        setAmplitude(avg);
+      } else {
+        setAmplitude(0);
+      }
+      animFrameRef.current = requestAnimationFrame(tick);
+    }
+    animFrameRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(animFrameRef.current);
+  }, [player.playbackState]);
 
   const hasSearch = searchParams.tag || searchParams.country || searchParams.name;
 
@@ -69,12 +100,13 @@ export default function App() {
         onViewChange={setActiveView}
         favoritesCount={favorites.length}
         playbackState={player.playbackState}
+        amplitude={amplitude}
         searchOpen={searchOpen}
         onSearchToggle={() => setSearchOpen(v => !v)}
         hasActiveSearch={!!hasSearch}
       />
 
-      {/* Search panel — slides in below header */}
+      {/* Search panel */}
       {searchOpen && (
         <div className="shrink-0 border-b border-hud-border">
           <SearchPanel
@@ -90,15 +122,12 @@ export default function App() {
         <NowPlayingPanel
           station={player.currentStation}
           playbackState={player.playbackState}
-          volume={player.volume}
-          onPause={player.pause}
-          onResume={player.resume}
-          onStop={player.stop}
-          onVolumeChange={player.setVolume}
+          streamHealth={player.streamHealth}
+          analyserNode={player.analyserNode}
         />
       </div>
 
-      {/* Station list — fills remaining space */}
+      {/* Station list */}
       <div className="flex-1 overflow-hidden">
         <StationList
           stations={displayedStations}
@@ -114,8 +143,21 @@ export default function App() {
         />
       </div>
 
+      {/* Bottom Toolbar */}
+      <BottomToolbar
+        playbackState={player.playbackState}
+        currentStation={player.currentStation}
+        volume={player.volume}
+        theme={theme}
+        onPause={player.pause}
+        onResume={player.resume}
+        onStop={player.stop}
+        onVolumeChange={player.setVolume}
+        onToggleTheme={toggleTheme}
+      />
+
       {/* Footer */}
-      <footer className="shrink-0 border-t border-hud-border px-4 py-1.5 flex items-center justify-between">
+      <footer className="shrink-0 border-t border-hud-border px-4 py-1 flex items-center justify-between">
         <span className="hud-text-dim text-[9px] tracking-widest">
           © {new Date().getFullYear()} SQUADRON RADIO
         </span>

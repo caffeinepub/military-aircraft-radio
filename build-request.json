@@ -1,66 +1,12 @@
 {
   "kind": "build_request",
-  "title": "Minimalist redesign with functional radar UX element, single mobile view",
-  "projectName": "Squadron Radio",
+  "title": "Deploy application to Internet Computer network",
   "priority": "normal",
-  "requirements": [
-    {
-      "id": "REQ-7",
-      "text": "Redesign the entire frontend UI to be minimalist: remove all purely decorative elements including scanlines, gauge widgets (GaugeWidget.tsx), grid overlays, corner bracket decorations, and vignette effects from HUDLayout. Strip forced military jargon labels (e.g., 'TACTICAL', 'MISSION BRIEFING', 'INTEL') from all components. Retain the dark color palette and subtle aircraft-themed language only where it serves a real functional purpose (e.g., app title, button labels, station status). All content must fit in a single mobile viewport without scrolling.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-4",
-          "msg-5",
-          "msg-6"
-        ],
-        "quotes": [
-          "I don't want it to say tactical or have extras for the sake of extras but if we do need a button or title it should be themed",
-          "It should all fit in one mobile view",
-          "Keep the radar somewhere minimal bonus if it's useful ux element just start building"
-        ]
-      },
-      "acceptanceCriteria": [
-        "No scanline overlay, no gauge widgets, no grid background, no corner bracket decorations visible in the UI",
-        "No label text containing 'TACTICAL', 'MISSION BRIEFING', 'INTEL REPORT', or similar forced military jargon",
-        "The full app (header, now-playing, search, station list, favorites) fits within a single mobile viewport (375px width, 812px height) without vertical overflow",
-        "Dark background color palette is preserved",
-        "App title and functional button labels retain a subtle aviation/aircraft tone without being over-the-top"
-      ]
-    },
-    {
-      "id": "REQ-8",
-      "text": "Repurpose the RadarWidget as a minimal, functional UX indicator rather than a decorative animation. The radar should convey real application state — for example, a slow sweep when idle/searching, a faster sweep or active blip when a station is loading or playing, and a static/dimmed state when stopped or in error. Position it compactly (e.g., small corner element or inline within the now-playing area) so it does not dominate the layout but provides at-a-glance feedback.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-6",
-          "msg-7"
-        ],
-        "quotes": [
-          "Keep the radar somewhere minimal bonus if it's useful ux element just start building"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Radar widget is visible but compact — no larger than ~80x80px in the layout",
-        "Radar sweep speed or blip behavior changes based on playback state (stopped, loading, playing, error)",
-        "Radar does not take up significant vertical space and does not break the single mobile view constraint",
-        "Removing the radar would not break any other functionality (it is purely a state indicator)"
-      ]
-    }
-  ],
-  "constraints": [
-    "Do not modify backend/main.mo — no backend changes required",
-    "Do not edit files under frontend/src/hooks/ (immutable paths)",
-    "Do not edit files under frontend/src/components/ui/ (immutable paths)",
-    "All UI must fit within a single mobile viewport without scrolling"
-  ],
+  "requirements": [],
+  "constraints": [],
   "nonGoals": [
-    "Adding new radio features (search, favorites, streaming) — these are already implemented",
-    "Changing the backend data model or API",
-    "Adding a light mode or non-dark theme",
-    "3D cockpit visualization or Three.js integration",
-    "Removing the radar widget entirely"
+    "Making any code changes before deployment",
+    "Modifying any existing features or UI"
   ],
   "imageRequirements": {
     "required": [],

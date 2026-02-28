@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;500;600;700;900&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -50,6 +48,45 @@
     --hud-panel: oklch(0.13 0.015 145);
     --hud-border: oklch(0.25 0.055 145);
     --hud-glow: 0 0 6px oklch(0.72 0.22 145 / 0.5);
+
+    /* Light mode overrides (applied via .light class) */
+    --hud-bg-light: oklch(0.96 0.008 145);
+    --hud-panel-light: oklch(0.92 0.01 145);
+    --hud-border-light: oklch(0.7 0.06 145);
+    --hud-green-light: oklch(0.38 0.18 145);
+    --hud-green-dim-light: oklch(0.55 0.1 145);
+    --hud-green-bright-light: oklch(0.25 0.22 145);
+    --hud-amber-light: oklch(0.5 0.18 80);
+  }
+
+  .light {
+    --background: 0.96 0.008 145;
+    --foreground: 0.25 0.12 145;
+    --card: 0.92 0.01 145;
+    --card-foreground: 0.25 0.12 145;
+    --popover: 0.94 0.01 145;
+    --popover-foreground: 0.25 0.12 145;
+    --primary: 0.38 0.18 145;
+    --primary-foreground: 0.96 0.008 145;
+    --secondary: 0.88 0.015 145;
+    --secondary-foreground: 0.38 0.18 145;
+    --muted: 0.9 0.012 145;
+    --muted-foreground: 0.55 0.1 145;
+    --accent: 0.38 0.18 145;
+    --accent-foreground: 0.96 0.008 145;
+    --border: 0.7 0.06 145;
+    --input: 0.88 0.015 145;
+    --ring: 0.38 0.18 145;
+
+    --hud-green: oklch(0.38 0.18 145);
+    --hud-green-dim: oklch(0.55 0.1 145);
+    --hud-green-bright: oklch(0.25 0.22 145);
+    --hud-amber: oklch(0.5 0.18 80);
+    --hud-amber-dim: oklch(0.6 0.12 80);
+    --hud-bg: oklch(0.96 0.008 145);
+    --hud-panel: oklch(0.92 0.01 145);
+    --hud-border: oklch(0.7 0.06 145);
+    --hud-glow: 0 0 6px oklch(0.38 0.18 145 / 0.3);
   }
 
   * {
@@ -75,6 +112,10 @@
     text-shadow: 0 0 8px oklch(0.72 0.22 145 / 0.6);
   }
 
+  .light .hud-text-bright {
+    text-shadow: 0 0 4px oklch(0.38 0.18 145 / 0.3);
+  }
+
   .hud-text-dim {
     color: var(--hud-green-dim);
   }
@@ -92,8 +133,17 @@
     font-family: 'Orbitron', sans-serif;
   }
 
+  .font-doto {
+    font-family: 'Doto', monospace;
+  }
+
   .station-row-active {
     background: oklch(0.72 0.22 145 / 0.1);
+    border-left: 2px solid var(--hud-green);
+  }
+
+  .light .station-row-active {
+    background: oklch(0.38 0.18 145 / 0.08);
     border-left: 2px solid var(--hud-green);
   }
 }
@@ -133,7 +183,7 @@
 
 /* Input overrides */
 input, select, textarea {
-  background-color: oklch(0.13 0.015 145) !important;
+  background-color: var(--hud-panel) !important;
   color: var(--hud-green) !important;
   border-color: var(--hud-border) !important;
   font-family: 'Share Tech Mono', monospace !important;

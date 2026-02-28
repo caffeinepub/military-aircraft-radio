@@ -18,6 +18,7 @@ export default {
       fontFamily: {
         mono: ['"Share Tech Mono"', 'monospace'],
         orbitron: ['Orbitron', 'sans-serif'],
+        doto: ['Doto', 'monospace'],
       },
       colors: {
         border: 'oklch(var(--border))',
@@ -112,5 +113,5 @@ export default {
       }
     }
   },
-  plugins: [typography, containerQueries, animate]
+  plugins: [typography, containerQueries, animate],
 };

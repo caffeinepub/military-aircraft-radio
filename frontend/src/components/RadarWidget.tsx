@@ -5,31 +5,41 @@ interface RadarWidgetProps {
   size?: number;
   className?: string;
   playbackState?: PlaybackState;
-  // Legacy prop kept for compatibility
+  amplitude?: number; // 0-1 audio amplitude
   isActive?: boolean;
 }
 
-// Sweep speed in radians per frame based on state
-function getSweepSpeed(state: PlaybackState | undefined): number {
-  switch (state) {
-    case 'playing': return 0.06;
-    case 'loading': return 0.12;
-    case 'paused': return 0.015;
-    case 'error': return 0;
-    default: return 0.02; // stopped/idle — very slow
+function getSweepSpeed(state: PlaybackState | undefined, amplitude: number): number {
+  const base = (() => {
+    switch (state) {
+      case 'playing': return 0.05;
+      case 'loading': return 0.10;
+      case 'paused': return 0.012;
+      case 'error': return 0;
+      default: return 0.018;
+    }
+  })();
+  // Amplitude modulates speed: +0 to +0.04 extra
+  if (state === 'playing') {
+    return base + amplitude * 0.04;
   }
+  return base;
 }
 
-export function RadarWidget({ size = 72, className = '', playbackState, isActive }: RadarWidgetProps) {
+export function RadarWidget({ size = 72, className = '', playbackState, amplitude = 0, isActive }: RadarWidgetProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animFrameRef = useRef<number>(0);
   const angleRef = useRef(0);
   const stateRef = useRef(playbackState);
+  const amplitudeRef = useRef(amplitude);
 
-  // Keep stateRef in sync without restarting the animation loop
   useEffect(() => {
     stateRef.current = playbackState;
   }, [playbackState]);
+
+  useEffect(() => {
+    amplitudeRef.current = amplitude;
+  }, [amplitude]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -41,7 +51,6 @@ export function RadarWidget({ size = 72, className = '', playbackState, isActive
     const cy = size / 2;
     const r = size / 2 - 2;
 
-    // A few blips
     const blips = Array.from({ length: 3 }, () => ({
       angle: Math.random() * Math.PI * 2,
       dist: Math.random() * 0.55 + 0.2,
@@ -50,7 +59,8 @@ export function RadarWidget({ size = 72, className = '', playbackState, isActive
 
     function draw() {
       const currentState = stateRef.current;
-      const speed = getSweepSpeed(currentState);
+      const amp = amplitudeRef.current;
+      const speed = getSweepSpeed(currentState, amp);
 
       ctx!.clearRect(0, 0, size, size);
 
@@ -60,14 +70,13 @@ export function RadarWidget({ size = 72, className = '', playbackState, isActive
       ctx!.arc(cx, cy, r, 0, Math.PI * 2);
       ctx!.fill();
 
-      // Error state — dim static ring, no sweep
+      // Error state
       if (currentState === 'error') {
         ctx!.strokeStyle = 'rgba(220, 60, 60, 0.4)';
         ctx!.lineWidth = 1;
         ctx!.beginPath();
         ctx!.arc(cx, cy, r, 0, Math.PI * 2);
         ctx!.stroke();
-        // X mark
         ctx!.strokeStyle = 'rgba(220, 60, 60, 0.5)';
         ctx!.lineWidth = 1;
         ctx!.beginPath();
@@ -80,7 +89,7 @@ export function RadarWidget({ size = 72, className = '', playbackState, isActive
         return;
       }
 
-      // Grid circles — very subtle
+      // Grid circles
       ctx!.strokeStyle = 'rgba(57, 255, 100, 0.1)';
       ctx!.lineWidth = 0.5;
       for (let i = 1; i <= 2; i++) {
@@ -89,7 +98,7 @@ export function RadarWidget({ size = 72, className = '', playbackState, isActive
         ctx!.stroke();
       }
 
-      // Sweep trail
+      // Sweep trail — brighter with amplitude
       const sweepAngle = angleRef.current;
       const trailLength = Math.PI * 0.45;
       ctx!.save();
@@ -97,31 +106,33 @@ export function RadarWidget({ size = 72, className = '', playbackState, isActive
       ctx!.moveTo(cx, cy);
       ctx!.arc(cx, cy, r, sweepAngle - trailLength, sweepAngle);
       ctx!.closePath();
+      const trailAlpha = 0.08 + amp * 0.12;
       const grad = ctx!.createRadialGradient(cx, cy, 0, cx, cy, r);
-      grad.addColorStop(0, 'rgba(57, 255, 100, 0)');
-      grad.addColorStop(1, 'rgba(57, 255, 100, 0.1)');
+      grad.addColorStop(0, `rgba(57, 255, 100, 0)`);
+      grad.addColorStop(1, `rgba(57, 255, 100, ${trailAlpha})`);
       ctx!.fillStyle = grad;
       ctx!.fill();
       ctx!.restore();
 
-      // Sweep line
+      // Sweep line — brighter with amplitude
+      const lineAlpha = 0.7 + amp * 0.3;
       ctx!.save();
-      ctx!.strokeStyle = 'rgba(57, 255, 100, 0.85)';
+      ctx!.strokeStyle = `rgba(57, 255, 100, ${lineAlpha})`;
       ctx!.lineWidth = 1;
       ctx!.shadowColor = '#39ff64';
-      ctx!.shadowBlur = 4;
+      ctx!.shadowBlur = 3 + amp * 6;
       ctx!.beginPath();
       ctx!.moveTo(cx, cy);
       ctx!.lineTo(cx + Math.cos(sweepAngle) * r, cy + Math.sin(sweepAngle) * r);
       ctx!.stroke();
       ctx!.restore();
 
-      // Blips — only show when playing or loading
+      // Blips
       if (currentState === 'playing' || currentState === 'loading') {
         blips.forEach((blip) => {
           const angleDiff = ((sweepAngle - blip.angle) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
           if (angleDiff < 0.2) {
-            blip.opacity = 1;
+            blip.opacity = 0.6 + amp * 0.4;
           } else {
             blip.opacity = Math.max(0, blip.opacity - 0.012);
           }
@@ -131,7 +142,7 @@ export function RadarWidget({ size = 72, className = '', playbackState, isActive
             ctx!.save();
             ctx!.fillStyle = `rgba(57, 255, 100, ${blip.opacity})`;
             ctx!.shadowColor = '#39ff64';
-            ctx!.shadowBlur = 5;
+            ctx!.shadowBlur = 4 + amp * 4;
             ctx!.beginPath();
             ctx!.arc(bx, by, 1.5, 0, Math.PI * 2);
             ctx!.fill();
@@ -148,7 +159,7 @@ export function RadarWidget({ size = 72, className = '', playbackState, isActive
       ctx!.stroke();
 
       // Center dot
-      ctx!.fillStyle = 'rgba(57, 255, 100, 0.7)';
+      ctx!.fillStyle = `rgba(57, 255, 100, ${0.6 + amp * 0.4})`;
       ctx!.beginPath();
       ctx!.arc(cx, cy, 1.5, 0, Math.PI * 2);
       ctx!.fill();

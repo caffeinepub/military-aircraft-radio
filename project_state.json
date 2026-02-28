@@ -1,10 +1,13 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 5,
-  "summary": "Military aircraft-themed radio player web app with a minimalist cockpit-inspired interface. Single mobile view, dark color palette, no decorative-only elements (no scanlines, radar animations, gauge widgets, grid overlays, or corner brackets). Forced military jargon removed, but functional elements (buttons, labels, app title) retain subtle aircraft theming. Radar retained as a minimal, functional UX element (e.g., signal/loading state indicator). Uses Radio Browser API for free streaming stations worldwide. Features include genre/country search, favorites/bookmarks, and a clean now-playing display.",
+  "projectStateVersion": 9,
+  "summary": "Military aircraft-themed radio player web app with a minimalist cockpit-inspired interface (Dieter Rams × Military aesthetic). Single mobile view, dark color palette, Doto font applied selectively. Functional elements retain subtle aircraft theming. Audio-reactive visuals using Web Audio API (frequency-based visualizer integrated with radar indicator). Bottom toolbar with centered play/pause, dark mode toggle, and meatball menu. Radio Browser API for free streaming stations worldwide. Features include genre/country search, favorites/bookmarks, now-playing display, network resilience (auto-reconnect/retry), and station persistence (localStorage).",
   "architectural_notes": [
     "Use Radio Browser API (https://www.radio-browser.info/) for fetching free streaming station data",
-    "UI redesign: minimalist single mobile view — remove scanlines, radar sweep animations, gauge widgets, grid overlays, corner brackets, and forced military jargon (e.g. 'TACTICAL', 'MISSION BRIEFING'). Keep dark palette and subtle aircraft theming on functional elements. Radar retained as a minimal functional UX indicator (signal/loading state)."
+    "UI redesign: minimalist single mobile view — remove scanlines, radar sweep animations, gauge widgets, grid overlays, corner brackets, and forced military jargon (e.g. 'TACTICAL', 'MISSION BRIEFING'). Keep dark palette and subtle aircraft theming on functional elements. Radar retained as a minimal functional UX indicator (signal/loading state).",
+    "Use Web Audio API for audio-reactive visuals; radar pulse/sweep reacts to audio amplitude, frequency bars render in now-playing area",
+    "Doto font applied selectively to station name and key headings only",
+    "Bottom toolbar: single-row with centered play/pause, dark mode toggle, and meatball menu"
   ],
   "known_issues": [],
   "isFixRequest": false,
@@ -72,6 +75,46 @@
         "REQ-8"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-apply-a-dieter-rams-military-minimalist-aesthetic-refinement-across-all-frontend-components-tighten-grid-spacing-and-proportions-using-consistent-4-8pt-rhythm-apply-the-doto-font-selectively-to-the-station-name-and-key-numeric-status-readouts-ensure-all-interactive-elements-have-purposeful-sizing-with-no-extraneous-decoration-and-maintain-the-existing-dark-tactical-color-palette-throughout",
+      "title": "Apply a Dieter Rams × Military minimalist aesthetic refinement across all frontend components: tighten grid spacing and proportions using consistent 4/8pt rhythm, apply the Doto font selectively to the station name and key numeric/status readouts, ensure all interactive elements have purposeful sizing with no extraneous decoration, and maintain the existing dark tactical color palette throughout.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-web-audio-api-based-audio-reactive-visualizer-in-the-now-playing-area-connect-the-html-audio-element-from-useradioplayer-ts-to-an-analysernode-and-render-a-real-time-frequency-bar-or-waveform-visualization-minimalist-low-bar-count-fitting-the-dark-tactical-palette-the-radarwidget-sweep-speed-and-blip-intensity-should-additionally-respond-to-audio-amplitude-fast-bright-when-signal-is-strong-slow-dim-when-quiet-or-stopped",
+      "title": "Implement a Web Audio API-based audio-reactive visualizer in the now-playing area. Connect the HTML Audio element from useRadioPlayer.ts to an AnalyserNode and render a real-time frequency bar or waveform visualization (minimalist, low bar count, fitting the dark tactical palette). The RadarWidget sweep speed and blip intensity should additionally respond to audio amplitude — fast/bright when signal is strong, slow/dim when quiet or stopped.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-consolidate-playback-controls-into-a-single-bottom-toolbar-row-containing-centered-play-pause-button-a-dark-light-mode-toggle-and-a-meatball-menu-three-dot-button-the-meatball-menu-should-open-a-simple-popover-with-at-minimum-a-share-option-copies-current-station-url-to-clipboard-and-an-about-entry-remove-any-duplicate-controls-currently-shown-elsewhere-in-the-layout",
+      "title": "Consolidate playback controls into a single bottom toolbar row containing: centered play/pause button, a dark/light mode toggle, and a meatball menu (three-dot) button. The meatball menu should open a simple popover with at minimum a 'Share' option (copies current station URL to clipboard) and an 'About' entry. Remove any duplicate controls currently shown elsewhere in the layout.",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-network-resilience-in-useradioplayer-ts-detect-stream-stalls-audio-element-stalled-error-events-with-no-progress-for-5-seconds-automatically-retry-the-stream-up-to-3-times-with-exponential-backoff-and-expose-a-stream-health-status-healthy-stalled-reconnecting-failed-that-the-ui-can-display-show-a-brief-reconnecting-indicator-in-the-now-playing-area-during-retry-attempts",
+      "title": "Implement network resilience in useRadioPlayer.ts: detect stream stalls (audio element stalled/error events with no progress for >5 seconds), automatically retry the stream up to 3 times with exponential backoff, and expose a stream health status (healthy, stalled, reconnecting, failed) that the UI can display. Show a brief reconnecting indicator in the now-playing area during retry attempts.",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-persist-the-last-played-station-to-localstorage-in-useradioplayer-ts-or-app-tsx-on-page-reload-read-the-saved-station-from-localstorage-and-restore-it-as-the-selected-station-pre-populated-in-the-now-playing-panel-without-auto-playing-audio-wait-for-explicit-user-interaction",
+      "title": "Persist the last-played station to localStorage in useRadioPlayer.ts or App.tsx. On page reload, read the saved station from localStorage and restore it as the selected station (pre-populated in the now-playing panel) without auto-playing audio (wait for explicit user interaction).",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -102,6 +145,36 @@
     {
       "id": "AR-5",
       "summary": "Mission-briefing-style now-playing display",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Dieter Rams × Military minimalist aesthetic: tightened proportions, purposeful spacing, Doto font on key elements",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Audio-reactive visuals using Web Audio API — frequency-based visualizer integrated with radar indicator",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Bottom toolbar refinement: centered play/pause, dark mode toggle, meatball menu",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Network resilience: auto-reconnect on stream stall, retry logic, stream health monitoring",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Station persistence: save last-played station to localStorage and restore on reload",
       "reqIds": [],
       "status": "pending"
     }
