@@ -1,57 +1,48 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Cycle slogans in Globe tab + fix perpetual loading bug in Stations tab",
+  "title": "Replace PWA icon with user-provided image and remove yellow pulsing dot from Globe tab",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Add cycling anti-subscription slogans with fade transitions to the GlobeView tab, matching the existing implementation in NowPlayingPanel and FullscreenOverlay",
+      "summary": "Replace the generated PWA icon images with the user-provided image from the ICP storage URL and update all manifest and HTML references",
       "acceptanceCriteria": [
-        "Slogans are visible in the Globe tab and rotate through the same list used in NowPlayingPanel/FullscreenOverlay",
-        "Transitions use the same fade effect as the existing slogan cycling implementation",
-        "Slogan display does not obstruct globe interaction (markers, hover tooltips, OrbitControls)"
+        "The user-provided image URL is downloaded and saved as a static asset in frontend/public/",
+        "manifest.json icon entries (256px and 512px) reference the new image file",
+        "No previously generated PWA icon assets remain referenced in manifest.json or index.html",
+        "The app installs with the correct custom icon on supported devices"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/GlobeView.tsx",
-          "operation": "modify",
-          "description": "Add a slogan cycling section positioned below or around the globe that uses the same slogan list and fade transition logic as NowPlayingPanel and FullscreenOverlay. Extract shared slogan logic into a reusable hook if not already present. Position the slogan text to avoid obstructing the interactive globe elements (markers, tooltips, OrbitControls). Verify the existing slogan implementation in NowPlayingPanel and FullscreenOverlay to maintain consistency in timing and fade effect."
-        },
-        {
-          "path": "frontend/src/hooks/useSlogans.ts",
+          "path": "frontend/public/antenna-icon.png",
           "operation": "create",
-          "description": "Create a custom hook that encapsulates the slogan cycling logic (slogan list, interval timing, fade state management) extracted from NowPlayingPanel and FullscreenOverlay. This hook should return the current slogan and fade state to ensure consistent behavior across all three components (NowPlayingPanel, FullscreenOverlay, GlobeView). Use the same interval and transition settings as the existing implementations."
+          "description": "Download the user-provided image from https://wkeve-6yaaa-aaaaf-qahcq-cai.raw.icp0.io/storage?contentId=kl67x-j6c5g-ptso3-xq4fe-kmcuc-trzl2-nzxqt-qjedv-j3y4m-3746e-tqe-image-29480 and save it as antenna-icon.png in frontend/public/. This will serve as the source PWA icon for all sizes."
         },
         {
-          "path": "frontend/src/components/NowPlayingPanel.tsx",
+          "path": "frontend/public/manifest.json",
           "operation": "modify",
-          "description": "Refactor to use the new useSlogans hook instead of inline slogan cycling logic, ensuring the behavior remains identical to the current implementation. Remove duplicated slogan list and cycling code, replacing it with the shared hook."
+          "description": "Update the icons array in manifest.json to reference the new antenna-icon.png file for both 256x256 and 512x512 icon entries. Remove references to any previously generated PWA icon assets (fighter-jet-logo.dim_256x256.png and pwa-player-mascot.dim_512x512.png)."
         },
         {
-          "path": "frontend/src/components/FullscreenOverlay.tsx",
+          "path": "frontend/index.html",
           "operation": "modify",
-          "description": "Refactor to use the new useSlogans hook instead of inline slogan cycling logic, ensuring the behavior remains identical to the current implementation. Remove duplicated slogan list and cycling code, replacing it with the shared hook."
+          "description": "Update any icon or image references in index.html (apple-touch-icon meta tags, favicon link tags, etc.) to point to the new antenna-icon.png file. Remove references to previously generated icon assets if present."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Fix the perpetual loading state in the Stations tab by ensuring the loading spinner resolves to either a populated station list or a clear error/empty state",
+      "summary": "Remove the yellow pulsing dot/marker from the Globe tab (GlobeView component)",
       "acceptanceCriteria": [
-        "Opening the Stations tab resolves to either a populated station list or a visible error/empty state within a reasonable timeout",
-        "No infinite loading spinner is shown when the Radio Browser API has returned data or an error",
-        "Retry logic or fallback handling is in place if the initial fetch fails"
+        "No yellow pulsing dot or animated marker is rendered on the globe in the Globe tab (GlobeView)",
+        "Station location points on the globe remain functional and clickable if applicable, only the yellow pulsing animation is removed",
+        "The globe renders without any pulsing dot animation at any station coordinate"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/App.tsx",
+          "path": "frontend/src/components/GlobeView.tsx",
           "operation": "modify",
-          "description": "Review the stations data fetching logic and conditional rendering in the Stations tab view. Ensure that the loading state is properly tied to the data fetch lifecycle (pending, success, error). Add explicit error and empty state handling so that when the Radio Browser API returns an error or empty result, the UI shows a clear message instead of an infinite spinner. Verify that React Query's isLoading, isError, and data states are correctly checked before rendering the StationList. If the fetch is stuck, add a timeout or fallback mechanism to exit the loading state."
-        },
-        {
-          "path": "frontend/src/services/radioBrowserApi.ts",
-          "operation": "modify",
-          "description": "Review the Radio Browser API service methods to ensure they properly handle network errors, timeouts, and empty responses. Add explicit error throwing or rejection for failed requests so that React Query can detect and surface the error state. Ensure that promises resolve or reject in all code paths to prevent hanging requests that could cause perpetual loading."
+          "description": "Remove the yellow pulsing dot marker from the GlobeView 3D globe. Locate and delete or comment out the mesh/geometry/material code that renders the animated pulsing marker at station coordinates. Ensure station location points remain clickable and functional while removing only the pulsing animation visual."
         }
       ]
     }

@@ -103,19 +103,9 @@ function EarthScene({ stationPoints, currentStation, onStationSelect, onHover, i
   }, [isLight]);
 
   useFrame(() => {
-    const t = clockRef.current.getElapsedTime();
     if (globeRef.current) globeRef.current.rotation.y += 0.0008;
     if (atmosphereRef.current) atmosphereRef.current.rotation.y += 0.0008;
     if (pointsGroupRef.current) pointsGroupRef.current.rotation.y += 0.0008;
-
-    pointMeshes.current.forEach((sp, mesh) => {
-      const isCurrent = currentStation && sp.station.name === currentStation.name;
-      if (isCurrent) {
-        const scale = 1 + 0.5 * Math.sin(t * 4);
-        mesh.scale.setScalar(scale);
-        (mesh.material as THREE.MeshBasicMaterial).opacity = 0.7 + 0.3 * Math.sin(t * 4);
-      }
-    });
   });
 
   const handleMouseMove = useCallback(
@@ -176,7 +166,7 @@ function EarthScene({ stationPoints, currentStation, onStationSelect, onHover, i
       const isCurrent = currentStation && sp.station.name === currentStation.name;
       const geo = new THREE.SphereGeometry(isCurrent ? 0.035 : 0.022, 8, 8);
       const mat = new THREE.MeshBasicMaterial({
-        color: isCurrent ? 0xffdd44 : (isLight ? 0x1a3a6e : 0xffffff),
+        color: isLight ? 0x1a3a6e : 0xffffff,
         transparent: true,
         opacity: isCurrent ? 1.0 : 0.9,
       });
@@ -186,6 +176,9 @@ function EarthScene({ stationPoints, currentStation, onStationSelect, onHover, i
       pointMeshes.current.set(mesh, sp);
     });
   }, [stationPoints, currentStation, isLight]);
+
+  // Suppress unused variable warning — clockRef kept for potential future use
+  void clockRef.current;
 
   return (
     <>

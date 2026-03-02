@@ -1,53 +1,56 @@
 {
   "kind": "build_request",
-  "title": "Cycle slogans in Globe tab + fix perpetual loading bug in Stations tab",
-  "priority": "high",
+  "title": "Replace PWA icon with user-provided image and remove yellow pulsing dot from Globe tab",
+  "projectName": "Antenna",
+  "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Add the same cycling anti-subscription slogans (with fade transitions) to the GlobeView tab, matching the behavior already implemented in NowPlayingPanel and FullscreenOverlay.",
+      "text": "Replace the generated PWA icon images with the user-provided image from https://wkeve-6yaaa-aaaaf-qahcq-cai.raw.icp0.io/storage?contentId=kl67x-j6c5g-ptso3-xq4fe-kmcuc-trzl2-nzxqt-qjedv-j3y4m-3746e-tqe-image-29480. Download this image and use it as the PWA icon for both the 256px and 512px entries in frontend/public/manifest.json. Remove any previously generated PWA icon assets and update all references in manifest.json and frontend/index.html accordingly.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-4"
         ],
         "quotes": [
-          "cycle the slogans in the globe tab too"
+          "use this image for the PWA image, remove the one you generated: https://wkeve-6yaaa-aaaaf-qahcq-cai.raw.icp0.io/storage?contentId=kl67x-j6c5g-ptso3-xq4fe-kmcuc-trzl2-nzxqt-qjedv-j3y4m-3746e-tqe-image-29480"
         ]
       },
       "acceptanceCriteria": [
-        "Slogans are visible in the Globe tab and rotate through the same list used in NowPlayingPanel/FullscreenOverlay",
-        "Transitions use the same fade effect as the existing slogan cycling implementation",
-        "Slogan display does not obstruct globe interaction (markers, hover tooltips, OrbitControls)"
+        "The user-provided image URL is downloaded and saved as a static asset in frontend/public/",
+        "manifest.json icon entries (256px and 512px) reference the new image file",
+        "No previously generated PWA icon assets remain referenced in manifest.json or index.html",
+        "The app installs with the correct custom icon on supported devices"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Fix the perpetual loading state for stations in the main (Stations) tab. Stations should either display correctly or show a clear error state — they must not remain stuck in a loading spinner indefinitely.",
+      "text": "Remove the yellow pulsing dot/marker from the Globe tab (GlobeView component). The pulsing dot that appears on the 3D globe to indicate a station's geographic location must be hidden or removed entirely from GlobeView.tsx.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-4"
         ],
         "quotes": [
-          "currently stations are perpetually loading in the main tab, seems like a bug"
+          "the globe tab needs the yellow pusling dot removed"
         ]
       },
       "acceptanceCriteria": [
-        "Opening the Stations tab resolves to either a populated station list or a visible error/empty state within a reasonable timeout",
-        "No infinite loading spinner is shown when the Radio Browser API has returned data or an error",
-        "Retry logic or fallback handling is in place if the initial fetch fails"
+        "No yellow pulsing dot or animated marker is rendered on the globe in the Globe tab (GlobeView)",
+        "Station location points on the globe remain functional and clickable if applicable, only the yellow pulsing animation is removed",
+        "The globe renders without any pulsing dot animation at any station coordinate"
       ]
     }
   ],
   "constraints": [
-    "Do not modify files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui",
-    "Slogan list and cycling logic must remain consistent with the existing implementation in NowPlayingPanel and FullscreenOverlay — extract shared logic if needed rather than duplicating divergent copies"
+    "Do not modify any files under frontend/src/hooks/ immutable paths",
+    "Use the exact user-provided image URL as the source for the PWA icon replacement",
+    "Do not alter the FullscreenGlobe component — only target GlobeView.tsx for the pulsing dot removal"
   ],
   "nonGoals": [
-    "Changing the slogan content or timing intervals",
-    "Redesigning the Globe tab layout",
-    "Modifying backend station storage or favorites logic"
+    "Redesigning the globe view or changing other visual elements",
+    "Modifying backend logic",
+    "Changing any other PWA manifest properties beyond the icon assets"
   ],
   "imageRequirements": {
     "required": [],

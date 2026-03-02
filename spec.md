@@ -1,10 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Add cycling slogans with fade transitions to the Globe tab and fix the perpetual loading bug in the Stations tab.
+**Goal:** Replace the PWA icon with a user-provided image and remove the yellow pulsing dot from the Globe tab.
 
 **Planned changes:**
-- Add the same anti-subscription slogan cycling (with fade transitions) to the GlobeView tab, reusing the shared logic from NowPlayingPanel and FullscreenOverlay, positioned so it does not obstruct globe interaction
-- Fix the Stations tab perpetual loading state so it resolves to either a populated station list or a clear error/empty state, with retry or fallback handling if the fetch fails
+- Download the user-provided image and save it as the PWA icon asset in `frontend/public/`
+- Update `manifest.json` icon entries (256px and 512px) to reference the new image
+- Remove previously generated PWA icon assets from `manifest.json` and `frontend/index.html`
+- Remove the yellow pulsing dot/animated marker from the `GlobeView.tsx` component
 
-**User-visible outcome:** Users see rotating slogans in the Globe tab matching the existing behavior, and the Stations tab no longer gets stuck in an infinite loading spinner.
+**User-visible outcome:** The app installs with the user's custom PWA icon, and the Globe tab no longer shows a yellow pulsing dot on the 3D globe.

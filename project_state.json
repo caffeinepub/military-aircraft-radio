@@ -1,38 +1,33 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "App with a globe tab and main tab showing stations. Slogans cycle in the player view and should also cycle in the globe tab. Stations have a perpetual loading bug in the main tab.",
-  "architectural_notes": [],
-  "known_issues": [
-    "Stations are perpetually loading in the main tab"
+  "summary": "Project with a globe tab feature and PWA support. User provided a custom PWA image to replace the generated one, and requested removal of the yellow pulsing dot from the globe tab.",
+  "architectural_notes": [
+    "PWA image is user-provided (external URL), not AI-generated"
   ],
+  "known_issues": [],
   "isFixRequest": true,
-  "existing_features": [],
-  "new_feature_requests": [
+  "existing_features": [
     {
-      "id": "AR-1",
-      "summary": "Cycle slogans in the globe tab",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-2",
-      "summary": "Add the same cycling anti-subscription slogans (with fade transitions) to the GlobeView tab, matching the behavior already implemented in NowPlayingPanel and FullscreenOverlay.",
+      "id": "feature-replace-the-generated-pwa-icon-images-with-the-user-provided-image-from-https-wkeve-6yaaa-aaaaf-qahcq-cai-raw-icp0-io-storage-contentid-kl67x-j6c5g-ptso3-xq4fe-kmcuc-trzl2-nzxqt-qjedv-j3y4m-3746e-tqe-image-29480-download-this-image-and-use-it-as-the-pwa-icon-for-both-the-256px-and-512px-entries-in-frontend-public-manifest-json-remove-any-previously-generated-pwa-icon-assets-and-update-all-references-in-manifest-json-and-frontend-index-html-accordingly",
+      "title": "Replace the generated PWA icon images with the user-provided image from https://wkeve-6yaaa-aaaaf-qahcq-cai.raw.icp0.io/storage?contentId=kl67x-j6c5g-ptso3-xq4fe-kmcuc-trzl2-nzxqt-qjedv-j3y4m-3746e-tqe-image-29480. Download this image and use it as the PWA icon for both the 256px and 512px entries in frontend/public/manifest.json. Remove any previously generated PWA icon assets and update all references in manifest.json and frontend/index.html accordingly.",
       "reqIds": [
         "REQ-1"
       ],
-      "status": "pending"
+      "version": 1
     },
     {
-      "id": "AR-3",
-      "summary": "Fix the perpetual loading state for stations in the main (Stations) tab. Stations should either display correctly or show a clear error state — they must not remain stuck in a loading spinner indefinitely.",
+      "id": "feature-remove-the-yellow-pulsing-dot-marker-from-the-globe-tab-globeview-component-the-pulsing-dot-that-appears-on-the-3d-globe-to-indicate-a-station-s-geographic-location-must-be-hidden-or-removed-entirely-from-globeview-tsx",
+      "title": "Remove the yellow pulsing dot/marker from the Globe tab (GlobeView component). The pulsing dot that appears on the 3D globe to indicate a station's geographic location must be hidden or removed entirely from GlobeView.tsx.",
       "reqIds": [
         "REQ-2"
       ],
-      "status": "pending"
+      "version": 1
     }
   ],
-  "projectName": "Cycle slogans in Globe tab + fix perpetual loading bug in Stations tab",
+  "new_feature_requests": [],
+  "gameProjectType": "none",
+  "projectName": "Antenna",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

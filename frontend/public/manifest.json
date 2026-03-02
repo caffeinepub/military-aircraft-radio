@@ -9,13 +9,13 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/assets/generated/fighter-jet-logo.dim_256x256.png",
+      "src": "https://wkeve-6yaaa-aaaaf-qahcq-cai.raw.icp0.io/storage?contentId=kl67x-j6c5g-ptso3-xq4fe-kmcuc-trzl2-nzxqt-qjedv-j3y4m-3746e-tqe-image-29480",
       "sizes": "256x256",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/assets/generated/pwa-player-mascot.dim_512x512.png",
+      "src": "https://wkeve-6yaaa-aaaaf-qahcq-cai.raw.icp0.io/storage?contentId=kl67x-j6c5g-ptso3-xq4fe-kmcuc-trzl2-nzxqt-qjedv-j3y4m-3746e-tqe-image-29480",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"

@@ -1,43 +1,50 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-03-02T22:15:32.471Z",
+  "generatedAt": "2026-03-02T22:30:10.834Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
     "total": 2,
-    "implemented": 0,
+    "implemented": 2,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Add the same cycling anti-subscription slogans (with fade transitions) to the GlobeView tab, matching the behavior already implemented in NowPlayingPanel and FullscreenOverlay.",
-        "status": "missing",
+        "summary": "Replace the generated PWA icon images with the user-provided image from https://wkeve-6yaaa-aaaaf-qahcq-cai.raw.icp0.io/storage?contentId=kl67x-j6c5g-ptso3-xq4fe-kmcuc-trzl2-nzxqt-qjedv-j3y4m-3746e-tqe-image-29480. Download this image and use it as the PWA icon for both the 256px and 512px entries in frontend/public/manifest.json. Remove any previously generated PWA icon assets and update all references in manifest.json and frontend/index.html accordingly.",
+        "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/GlobeView.tsx",
-          "frontend/src/hooks/useSlogans.ts",
-          "frontend/src/components/NowPlayingPanel.tsx",
-          "frontend/src/components/FullscreenOverlay.tsx"
+          "frontend/public/antenna-icon.png",
+          "frontend/public/manifest.json",
+          "frontend/index.html"
         ],
-        "matchedFiles": []
+        "matchedFiles": [
+          "frontend/public/manifest.json",
+          "frontend/index.html"
+        ]
       },
       {
         "id": "REQ-2",
-        "summary": "Fix the perpetual loading state for stations in the main (Stations) tab. Stations should either display correctly or show a clear error state — they must not remain stuck in a loading spinner indefinitely.",
-        "status": "missing",
+        "summary": "Remove the yellow pulsing dot/marker from the Globe tab (GlobeView component). The pulsing dot that appears on the 3D globe to indicate a station's geographic location must be hidden or removed entirely from GlobeView.tsx.",
+        "status": "implemented",
         "plannedFiles": [
-          "frontend/src/App.tsx",
-          "frontend/src/services/radioBrowserApi.ts"
+          "frontend/src/components/GlobeView.tsx"
         ],
-        "matchedFiles": []
+        "matchedFiles": [
+          "frontend/src/components/GlobeView.tsx"
+        ]
       }
     ]
   },
   "changedFiles": [
     "build-request.json",
     "feature_evidence.json",
+    "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
+    "frontend/index.html",
+    "frontend/public/manifest.json",
+    "frontend/src/components/GlobeView.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",
