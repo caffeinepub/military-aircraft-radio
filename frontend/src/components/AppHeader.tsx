@@ -1,14 +1,10 @@
 import React from 'react';
-import { Search, X } from 'lucide-react';
-import { RadarWidget } from './RadarWidget';
-import { PlaybackState } from '../hooks/useRadioPlayer';
+import { Search, X, Globe } from 'lucide-react';
 
 interface AppHeaderProps {
-  activeView: 'stations' | 'favorites';
-  onViewChange: (view: 'stations' | 'favorites') => void;
+  activeView: 'stations' | 'favorites' | 'globe';
+  onViewChange: (view: 'stations' | 'favorites' | 'globe') => void;
   favoritesCount: number;
-  playbackState: PlaybackState;
-  amplitude: number;
   searchOpen: boolean;
   onSearchToggle: () => void;
   hasActiveSearch: boolean;
@@ -18,69 +14,71 @@ export function AppHeader({
   activeView,
   onViewChange,
   favoritesCount,
-  playbackState,
-  amplitude,
   searchOpen,
   onSearchToggle,
   hasActiveSearch,
 }: AppHeaderProps) {
   return (
-    <header className="shrink-0 border-b border-hud-border px-3 py-2">
-      <div className="flex items-center gap-2">
+    <header className="shrink-0 border-b border-border px-4 py-3">
+      <div className="flex items-center gap-3">
         {/* Logo + Title */}
-        <div className="flex items-center gap-2 flex-1 min-w-0">
-          <img
-            src="/assets/generated/fighter-jet-logo.dim_256x256.png"
-            alt="Situation Monitor Radio"
-            className="w-7 h-7 object-contain shrink-0"
-            style={{ filter: 'drop-shadow(0 0 4px oklch(0.72 0.22 145 / 0.6)) brightness(1.1)' }}
-          />
-          <h1 className="font-doto font-black text-sm hud-text-bright tracking-widest leading-none truncate">
-            SITUATION MONITOR RADIO
+        <div className="flex items-center gap-2.5 flex-1 min-w-0">
+          <h1 className="font-heading text-xl tracking-tight text-foreground leading-none">
+            Antenna
           </h1>
         </div>
-
-        {/* Radar — audio-reactive state indicator */}
-        <RadarWidget size={36} playbackState={playbackState} amplitude={amplitude} />
 
         {/* Search toggle */}
         <button
           onClick={onSearchToggle}
-          className={`p-1.5 border transition-all ${
+          className={`p-1.5 rounded transition-colors ${
             searchOpen || hasActiveSearch
-              ? 'border-hud-green hud-text bg-hud-green/10'
-              : 'border-hud-border hud-text-dim hover:border-hud-green/50 hover:hud-text'
+              ? 'text-foreground bg-accent'
+              : 'text-muted-foreground hover:text-foreground hover:bg-accent'
           }`}
           aria-label="Toggle search"
         >
-          {searchOpen ? <X size={14} /> : <Search size={14} />}
+          {searchOpen ? <X size={15} /> : <Search size={15} />}
         </button>
       </div>
 
       {/* View tabs */}
-      <div className="flex gap-1 mt-2">
+      <div className="flex gap-1 mt-3">
         <button
           onClick={() => onViewChange('stations')}
-          className={`flex-1 py-1 font-orbitron text-[10px] tracking-widest border transition-all ${
+          className={`flex-1 py-1.5 text-xs font-medium tracking-wide rounded transition-colors ${
             activeView === 'stations'
-              ? 'hud-text border-hud-green bg-hud-green/10'
-              : 'hud-text-dim border-hud-border hover:border-hud-green/40'
+              ? 'text-foreground bg-accent'
+              : 'text-muted-foreground hover:text-foreground hover:bg-accent'
           }`}
         >
-          STATIONS
+          Stations
         </button>
         <button
           onClick={() => onViewChange('favorites')}
-          className={`flex-1 py-1 font-orbitron text-[10px] tracking-widest border transition-all relative ${
+          className={`flex-1 py-1.5 text-xs font-medium tracking-wide rounded transition-colors relative ${
             activeView === 'favorites'
-              ? 'hud-text border-hud-green bg-hud-green/10'
-              : 'hud-text-dim border-hud-border hover:border-hud-green/40'
+              ? 'text-foreground bg-accent'
+              : 'text-muted-foreground hover:text-foreground hover:bg-accent'
           }`}
         >
-          SAVED
+          Saved
           {favoritesCount > 0 && (
-            <span className="ml-1 hud-text-amber text-[9px]">{favoritesCount}</span>
+            <span className="ml-1.5 text-[10px] text-muted-foreground">
+              {favoritesCount}
+            </span>
           )}
+        </button>
+        <button
+          onClick={() => onViewChange('globe')}
+          className={`flex-1 py-1.5 text-xs font-medium tracking-wide rounded transition-colors flex items-center justify-center gap-1 ${
+            activeView === 'globe'
+              ? 'text-foreground bg-accent'
+              : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+          }`}
+        >
+          <Globe size={11} />
+          Globe
         </button>
       </div>
     </header>

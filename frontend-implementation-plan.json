@@ -1,26 +1,54 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Update app title to SITUATION MONITOR RADIO",
+  "title": "Black globe background + ensure all stations load including currently playing",
   "requirements": [
     {
-      "id": "REQ-14",
-      "summary": "Update the app title displayed in the header to read 'SITUATION MONITOR RADIO' in all places where the app name appears",
+      "id": "REQ-1",
+      "summary": "Change GlobeView and FullscreenGlobe component backgrounds to solid black (#000000) while preserving all existing globe styling, markers, rings, and orbit controls",
       "acceptanceCriteria": [
-        "The AppHeader displays 'SITUATION MONITOR RADIO' as the app title",
-        "No other app name variants (e.g., 'Squadron Radio') appear anywhere in the UI",
-        "The browser tab title (document title / index.html) also reflects 'SITUATION MONITOR RADIO'"
+        "The Three.js scene background in GlobeView is set to black",
+        "The Three.js scene background in FullscreenGlobe is set to black",
+        "Any canvas or container wrapper background behind the globe is also black",
+        "All existing markers, rings, Earth texture, and orbit controls remain unchanged"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/AppHeader.tsx",
+          "path": "frontend/src/components/GlobeView.tsx",
           "operation": "modify",
-          "description": "Update the app title text from 'Squadron Radio' (or current value) to 'SITUATION MONITOR RADIO' in the header component. Ensure the title is prominently displayed and any logo text or branding elements reflect the new name."
+          "description": "Set the Three.js scene background color to black (#000000) using scene.background = new THREE.Color(0x000000). Ensure the Canvas component and any parent containers also use black backgrounds to prevent color bleeding. Do not alter the Earth texture, markers, rings, or OrbitControls configuration."
         },
         {
-          "path": "frontend/index.html",
+          "path": "frontend/src/components/FullscreenGlobe.tsx",
           "operation": "modify",
-          "description": "Update the <title> tag in the HTML document head to 'SITUATION MONITOR RADIO' so the browser tab displays the correct app name."
+          "description": "Set the Three.js scene background color to black (#000000) using scene.background = new THREE.Color(0x000000). Ensure the Canvas component and any wrapper divs use black backgrounds. Preserve all existing marker positioning, pulsing ring animation, and visual effects."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Ensure the globe view loads and displays all available stations including the currently playing station as a marker, even if it is not in the fetched globe station list",
+      "acceptanceCriteria": [
+        "The currently playing station is always rendered as a marker on the globe even if the API did not return it in the globe station list",
+        "The globe fetches the maximum number of stations supported (up to 500) to minimize missing entries",
+        "American stations that have valid geo coordinates appear on the globe",
+        "No station with valid lat/lng is silently dropped from the rendered markers"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "In the globeStations React Query hook, ensure the API call fetches the maximum 500 stations (verify limit parameter in radioBrowserApi.getGlobeStations). After fetching globe stations, check if currentStation exists and has valid coordinates but is missing from the globe list. If so, merge currentStation into the globeStations array before passing to GlobeView. Ensure no duplicate station entries are added."
+        },
+        {
+          "path": "frontend/src/services/radioBrowserApi.ts",
+          "operation": "modify",
+          "description": "Review and confirm that getGlobeStations fetches up to 500 stations (the API maximum). If the current limit is lower, increase it to 500. Ensure the function filters out stations with invalid or missing lat/lng coordinates to prevent rendering errors on the globe."
+        },
+        {
+          "path": "frontend/src/components/GlobeView.tsx",
+          "operation": "modify",
+          "description": "Ensure all stations passed via props with valid geo_lat and geo_long are rendered as markers. Verify that no station is silently dropped during marker creation. If a station lacks coordinates, log a warning but do not render a marker for it. Confirm raycasting and hover interactions work correctly with the expanded station list."
         }
       ]
     }

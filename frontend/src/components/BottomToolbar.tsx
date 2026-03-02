@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Play, Pause, Square, Loader, Sun, Moon, MoreHorizontal, Share2, Info, Volume2, VolumeX } from 'lucide-react';
+import { Play, Pause, Square, Loader, Sun, Moon, MoreHorizontal, Share2, Info, Volume2, VolumeX, Maximize2, Minimize2 } from 'lucide-react';
 import { RadioStation } from '../services/radioBrowserApi';
 import { PlaybackState } from '../hooks/useRadioPlayer';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -16,6 +16,8 @@ interface BottomToolbarProps {
   onStop: () => void;
   onVolumeChange: (vol: number) => void;
   onToggleTheme: () => void;
+  isFullscreen?: boolean;
+  onToggleFullscreen?: () => void;
 }
 
 export function BottomToolbar({
@@ -28,6 +30,8 @@ export function BottomToolbar({
   onStop,
   onVolumeChange,
   onToggleTheme,
+  isFullscreen = false,
+  onToggleFullscreen,
 }: BottomToolbarProps) {
   const [meatballOpen, setMeatballOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -51,12 +55,12 @@ export function BottomToolbar({
   };
 
   return (
-    <div className="shrink-0 border-t border-hud-border px-4 py-2 flex items-center justify-between gap-2">
+    <div className="shrink-0 border-t border-neutral-border px-4 py-2.5 flex items-center justify-between gap-3">
       {/* Left: Volume */}
       <div className="flex items-center gap-2 flex-1">
         <button
           onClick={() => onVolumeChange(volume > 0 ? 0 : 0.8)}
-          className="hud-text-dim hover:hud-text transition-colors p-1 shrink-0"
+          className="text-dim hover:text-foreground transition-colors p-1 shrink-0"
           aria-label={volume === 0 ? 'Unmute' : 'Mute'}
         >
           {volume === 0 ? <VolumeX size={14} /> : <Volume2 size={14} />}
@@ -73,23 +77,23 @@ export function BottomToolbar({
         </div>
       </div>
 
-      {/* Center: Play/Pause + Stop */}
+      {/* Center: Stop + Play/Pause */}
       <div className="flex items-center gap-2 shrink-0">
         {/* Stop */}
         <button
           onClick={onStop}
           disabled={!hasStation}
-          className="hud-text-dim p-1.5 border border-hud-border hover:border-hud-green/50 hover:hud-text transition-all disabled:opacity-20 disabled:cursor-not-allowed"
+          className="text-dim p-1.5 rounded hover:text-foreground hover:bg-neutral-hover transition-colors disabled:opacity-20 disabled:cursor-not-allowed"
           aria-label="Stop"
         >
-          <Square size={12} />
+          <Square size={13} />
         </button>
 
-        {/* Play/Pause — center, larger */}
+        {/* Play/Pause */}
         {isLoading ? (
           <button
             disabled
-            className="hud-text-amber p-2 border border-hud-amber/40 bg-hud-amber/5"
+            className="text-dim p-2 rounded"
             aria-label="Loading"
           >
             <Loader size={16} className="animate-spin" />
@@ -97,7 +101,7 @@ export function BottomToolbar({
         ) : isPlaying ? (
           <button
             onClick={onPause}
-            className="hud-text p-2 border border-hud-green bg-hud-green/10 hover:bg-hud-green/20 transition-all"
+            className="text-foreground p-2 rounded bg-neutral-active hover:bg-neutral-hover transition-colors"
             aria-label="Pause"
           >
             <Pause size={16} />
@@ -106,7 +110,7 @@ export function BottomToolbar({
           <button
             onClick={onResume}
             disabled={!hasStation}
-            className="hud-text p-2 border border-hud-border hover:border-hud-green hover:bg-hud-green/10 transition-all disabled:opacity-20 disabled:cursor-not-allowed"
+            className="text-dim p-2 rounded hover:text-foreground hover:bg-neutral-hover transition-colors disabled:opacity-20 disabled:cursor-not-allowed"
             aria-label="Play"
           >
             <Play size={16} />
@@ -114,12 +118,27 @@ export function BottomToolbar({
         )}
       </div>
 
-      {/* Right: Theme toggle + Meatball menu */}
+      {/* Right: Fullscreen + Theme + Menu */}
       <div className="flex items-center gap-1 flex-1 justify-end">
+        {/* Fullscreen toggle */}
+        {onToggleFullscreen && (
+          <button
+            onClick={onToggleFullscreen}
+            className={`p-1.5 rounded transition-colors ${
+              isFullscreen
+                ? 'text-foreground bg-neutral-active'
+                : 'text-dim hover:text-foreground hover:bg-neutral-hover'
+            }`}
+            aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+          >
+            {isFullscreen ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
+          </button>
+        )}
+
         {/* Dark/Light toggle */}
         <button
           onClick={onToggleTheme}
-          className="hud-text-dim hover:hud-text transition-colors p-1.5 border border-hud-border hover:border-hud-green/50"
+          className="text-dim hover:text-foreground transition-colors p-1.5 rounded hover:bg-neutral-hover"
           aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
         >
           {theme === 'dark' ? <Sun size={13} /> : <Moon size={13} />}
@@ -129,7 +148,7 @@ export function BottomToolbar({
         <Popover open={meatballOpen} onOpenChange={setMeatballOpen}>
           <PopoverTrigger asChild>
             <button
-              className="hud-text-dim hover:hud-text transition-colors p-1.5 border border-hud-border hover:border-hud-green/50"
+              className="text-dim hover:text-foreground transition-colors p-1.5 rounded hover:bg-neutral-hover"
               aria-label="More options"
             >
               <MoreHorizontal size={13} />
@@ -138,23 +157,23 @@ export function BottomToolbar({
           <PopoverContent
             side="top"
             align="end"
-            className="w-44 p-1 bg-hud-panel border border-hud-border rounded-none"
+            className="w-44 p-1 bg-neutral-panel border border-neutral-border rounded"
           >
             <button
               onClick={handleShare}
-              className="w-full flex items-center gap-2 px-3 py-2 text-[11px] hud-text-dim hover:hud-text hover:bg-hud-green/10 transition-colors text-left"
+              className="w-full flex items-center gap-2 px-3 py-2 text-xs text-dim hover:text-foreground hover:bg-neutral-hover transition-colors text-left rounded"
             >
               <Share2 size={11} />
               {copied ? 'Copied!' : 'Share station'}
             </button>
-            <div className="border-t border-hud-border my-1" />
-            <div className="px-3 py-2 text-[10px] hud-text-dim">
+            <div className="border-t border-neutral-border my-1" />
+            <div className="px-3 py-2 text-[11px] text-dim">
               <div className="flex items-center gap-2 mb-1">
                 <Info size={10} />
-                <span className="font-orbitron tracking-widest">ABOUT</span>
+                <span className="font-medium text-foreground/60 text-[10px] tracking-wide">About</span>
               </div>
-              <p className="opacity-60 leading-relaxed">
-                Squadron Radio — tactical internet radio. Powered by Radio Browser API.
+              <p className="opacity-60 leading-relaxed text-[10px]">
+                Antenna — internet radio. Powered by Radio Browser API.
               </p>
             </div>
           </PopoverContent>

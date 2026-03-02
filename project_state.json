@@ -1,127 +1,30 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 11,
-  "summary": "Military aircraft-themed radio player web app with a minimalist cockpit-inspired interface (Dieter Rams × Military aesthetic). Single mobile view, dark color palette, Doto font applied selectively. Functional elements retain subtle aircraft theming. Audio-reactive visuals using Web Audio API (frequency-based visualizer integrated with radar indicator). Bottom toolbar with centered play/pause, dark mode toggle, and meatball menu. Radio Browser API for free streaming stations worldwide. Features include genre/country search, favorites/bookmarks, now-playing display, network resilience (auto-reconnect/retry), and station persistence (localStorage). App title is 'SITUATION MONITOR RADIO'.",
+  "projectStateVersion": 3,
+  "summary": "A globe-based radio station app where a 3D globe displays stations, with a black background matching the rest of the app. The currently playing station should always be visible/loaded on the globe.",
   "architectural_notes": [
-    "Use Radio Browser API (https://www.radio-browser.info/) for fetching free streaming station data",
-    "UI redesign: minimalist single mobile view — remove scanlines, radar sweep animations, gauge widgets, grid overlays, corner brackets, and forced military jargon (e.g. 'TACTICAL', 'MISSION BRIEFING'). Keep dark palette and subtle aircraft theming on functional elements. Radar retained as a minimal functional UX indicator (signal/loading state).",
-    "Use Web Audio API for audio-reactive visuals; radar pulse/sweep reacts to audio amplitude, frequency bars render in now-playing area",
-    "Doto font applied selectively to station name and key headings only",
-    "Bottom toolbar: single-row with centered play/pause, dark mode toggle, and meatball menu",
-    "App title/name is 'SITUATION MONITOR RADIO'"
+    "App uses a 3D globe to display radio stations; globe style should be preserved",
+    "App background is black; globe background must match"
   ],
-  "known_issues": [],
-  "isFixRequest": false,
+  "known_issues": [
+    "Some stations (especially American ones) are missing from the globe display",
+    "Currently playing station may not load/appear on the globe"
+  ],
+  "isFixRequest": true,
   "existing_features": [
     {
-      "id": "feature-implement-a-cockpit-hud-style-visual-theme-throughout-the-entire-application-dark-tactical-background-with-green-amber-phosphor-style-text-scanline-overlays-radar-sweep-animations-altimeter-speed-gauge-widgets-grid-overlays-and-corner-bracket-decorations-reminiscent-of-a-fighter-jet-heads-up-display-apply-this-theme-consistently-across-all-ui-components",
-      "title": "Implement a cockpit/HUD-style visual theme throughout the entire application: dark tactical background with green/amber phosphor-style text, scanline overlays, radar sweep animations, altimeter/speed gauge widgets, grid overlays, and corner bracket decorations reminiscent of a fighter jet heads-up display. Apply this theme consistently across all UI components.",
+      "id": "feature-change-the-globeview-and-fullscreenglobe-component-backgrounds-from-their-current-color-to-solid-black-000000-so-the-globe-matches-the-rest-of-the-app-s-dark-background-while-preserving-all-existing-globe-styling-markers-rings-and-orbit-controls",
+      "title": "Change the GlobeView and FullscreenGlobe component backgrounds from their current color to solid black (#000000) so the globe matches the rest of the app's dark background, while preserving all existing globe styling, markers, rings, and orbit controls.",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-integrate-with-the-radio-browser-api-https-www-radio-browser-info-to-fetch-and-stream-free-radio-stations-worldwide-fetch-station-lists-using-the-public-json-endpoints-e-g-https-de1-api-radio-browser-info-json-stations-play-station-audio-streams-directly-in-the-browser-using-an-html5-audio-element",
-      "title": "Integrate with the Radio Browser API (https://www.radio-browser.info/) to fetch and stream free radio stations worldwide. Fetch station lists using the public JSON endpoints (e.g., https://de1.api.radio-browser.info/json/stations). Play station audio streams directly in the browser using an HTML5 audio element.",
+      "id": "feature-ensure-the-globe-view-loads-and-displays-all-available-stations-without-missing-entries-the-currently-playing-station-must-always-appear-as-a-marker-on-the-globe-if-it-is-not-already-in-the-fetched-globe-station-list-it-must-be-added-to-the-rendered-markers-regardless",
+      "title": "Ensure the globe view loads and displays all available stations without missing entries. The currently playing station must always appear as a marker on the globe — if it is not already in the fetched globe station list, it must be added to the rendered markers regardless.",
       "reqIds": [
         "REQ-2"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-implement-station-search-functionality-allowing-users-to-filter-stations-by-genre-tag-and-by-country-using-inputs-that-query-the-radio-browser-api-search-endpoints",
-      "title": "Implement station search functionality allowing users to filter stations by genre (tag) and by country using inputs that query the Radio Browser API search endpoints.",
-      "reqIds": [
-        "REQ-3"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-implement-a-favorites-bookmarks-feature-allowing-users-to-save-and-remove-favorite-stations-persist-favorites-in-the-motoko-backend-so-they-survive-page-refreshes",
-      "title": "Implement a favorites/bookmarks feature allowing users to save and remove favorite stations. Persist favorites in the Motoko backend so they survive page refreshes.",
-      "reqIds": [
-        "REQ-4"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-implement-a-mission-briefing-style-now-playing-display-panel-that-shows-the-currently-playing-station-s-name-country-genre-tags-bitrate-and-codec-in-a-military-dossier-intel-report-style-layout-with-tactical-labels-and-formatting",
-      "title": "Implement a mission-briefing-style now-playing display panel that shows the currently playing station's name, country, genre tags, bitrate, and codec in a military dossier/intel-report style layout with tactical labels and formatting.",
-      "reqIds": [
-        "REQ-5"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-generate-and-use-a-custom-app-logo-image-styled-as-a-military-aircraft-silhouette-top-down-view-of-a-fighter-jet-rendered-in-a-tactical-green-on-dark-color-scheme-suitable-for-use-as-the-app-header-logo",
-      "title": "Generate and use a custom app logo image styled as a military aircraft silhouette (top-down view of a fighter jet) rendered in a tactical green-on-dark color scheme, suitable for use as the app header logo.",
-      "reqIds": [
-        "REQ-6"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-redesign-the-entire-frontend-ui-to-be-minimalist-remove-all-purely-decorative-elements-including-scanlines-gauge-widgets-gaugewidget-tsx-grid-overlays-corner-bracket-decorations-and-vignette-effects-from-hudlayout-strip-forced-military-jargon-labels-e-g-tactical-mission-briefing-intel-from-all-components-retain-the-dark-color-palette-and-subtle-aircraft-themed-language-only-where-it-serves-a-real-functional-purpose-e-g-app-title-button-labels-station-status-all-content-must-fit-in-a-single-mobile-viewport-without-scrolling",
-      "title": "Redesign the entire frontend UI to be minimalist: remove all purely decorative elements including scanlines, gauge widgets (GaugeWidget.tsx), grid overlays, corner bracket decorations, and vignette effects from HUDLayout. Strip forced military jargon labels (e.g., 'TACTICAL', 'MISSION BRIEFING', 'INTEL') from all components. Retain the dark color palette and subtle aircraft-themed language only where it serves a real functional purpose (e.g., app title, button labels, station status). All content must fit in a single mobile viewport without scrolling.",
-      "reqIds": [
-        "REQ-7"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-repurpose-the-radarwidget-as-a-minimal-functional-ux-indicator-rather-than-a-decorative-animation-the-radar-should-convey-real-application-state-for-example-a-slow-sweep-when-idle-searching-a-faster-sweep-or-active-blip-when-a-station-is-loading-or-playing-and-a-static-dimmed-state-when-stopped-or-in-error-position-it-compactly-e-g-small-corner-element-or-inline-within-the-now-playing-area-so-it-does-not-dominate-the-layout-but-provides-at-a-glance-feedback",
-      "title": "Repurpose the RadarWidget as a minimal, functional UX indicator rather than a decorative animation. The radar should convey real application state — for example, a slow sweep when idle/searching, a faster sweep or active blip when a station is loading or playing, and a static/dimmed state when stopped or in error. Position it compactly (e.g., small corner element or inline within the now-playing area) so it does not dominate the layout but provides at-a-glance feedback.",
-      "reqIds": [
-        "REQ-8"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-apply-a-dieter-rams-military-minimalist-aesthetic-refinement-across-all-frontend-components-tighten-grid-spacing-and-proportions-using-consistent-4-8pt-rhythm-apply-the-doto-font-selectively-to-the-station-name-and-key-numeric-status-readouts-ensure-all-interactive-elements-have-purposeful-sizing-with-no-extraneous-decoration-and-maintain-the-existing-dark-tactical-color-palette-throughout",
-      "title": "Apply a Dieter Rams × Military minimalist aesthetic refinement across all frontend components: tighten grid spacing and proportions using consistent 4/8pt rhythm, apply the Doto font selectively to the station name and key numeric/status readouts, ensure all interactive elements have purposeful sizing with no extraneous decoration, and maintain the existing dark tactical color palette throughout.",
-      "reqIds": [
-        "REQ-9"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-implement-a-web-audio-api-based-audio-reactive-visualizer-in-the-now-playing-area-connect-the-html-audio-element-from-useradioplayer-ts-to-an-analysernode-and-render-a-real-time-frequency-bar-or-waveform-visualization-minimalist-low-bar-count-fitting-the-dark-tactical-palette-the-radarwidget-sweep-speed-and-blip-intensity-should-additionally-respond-to-audio-amplitude-fast-bright-when-signal-is-strong-slow-dim-when-quiet-or-stopped",
-      "title": "Implement a Web Audio API-based audio-reactive visualizer in the now-playing area. Connect the HTML Audio element from useRadioPlayer.ts to an AnalyserNode and render a real-time frequency bar or waveform visualization (minimalist, low bar count, fitting the dark tactical palette). The RadarWidget sweep speed and blip intensity should additionally respond to audio amplitude — fast/bright when signal is strong, slow/dim when quiet or stopped.",
-      "reqIds": [
-        "REQ-10"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-consolidate-playback-controls-into-a-single-bottom-toolbar-row-containing-centered-play-pause-button-a-dark-light-mode-toggle-and-a-meatball-menu-three-dot-button-the-meatball-menu-should-open-a-simple-popover-with-at-minimum-a-share-option-copies-current-station-url-to-clipboard-and-an-about-entry-remove-any-duplicate-controls-currently-shown-elsewhere-in-the-layout",
-      "title": "Consolidate playback controls into a single bottom toolbar row containing: centered play/pause button, a dark/light mode toggle, and a meatball menu (three-dot) button. The meatball menu should open a simple popover with at minimum a 'Share' option (copies current station URL to clipboard) and an 'About' entry. Remove any duplicate controls currently shown elsewhere in the layout.",
-      "reqIds": [
-        "REQ-11"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-implement-network-resilience-in-useradioplayer-ts-detect-stream-stalls-audio-element-stalled-error-events-with-no-progress-for-5-seconds-automatically-retry-the-stream-up-to-3-times-with-exponential-backoff-and-expose-a-stream-health-status-healthy-stalled-reconnecting-failed-that-the-ui-can-display-show-a-brief-reconnecting-indicator-in-the-now-playing-area-during-retry-attempts",
-      "title": "Implement network resilience in useRadioPlayer.ts: detect stream stalls (audio element stalled/error events with no progress for >5 seconds), automatically retry the stream up to 3 times with exponential backoff, and expose a stream health status (healthy, stalled, reconnecting, failed) that the UI can display. Show a brief reconnecting indicator in the now-playing area during retry attempts.",
-      "reqIds": [
-        "REQ-12"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-persist-the-last-played-station-to-localstorage-in-useradioplayer-ts-or-app-tsx-on-page-reload-read-the-saved-station-from-localstorage-and-restore-it-as-the-selected-station-pre-populated-in-the-now-playing-panel-without-auto-playing-audio-wait-for-explicit-user-interaction",
-      "title": "Persist the last-played station to localStorage in useRadioPlayer.ts or App.tsx. On page reload, read the saved station from localStorage and restore it as the selected station (pre-populated in the now-playing panel) without auto-playing audio (wait for explicit user interaction).",
-      "reqIds": [
-        "REQ-13"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-the-app-title-displayed-in-the-header-to-read-situation-monitor-radio-in-all-places-where-the-app-name-appears-appheader-tsx-page-title-and-any-other-visible-instances",
-      "title": "Update the app title displayed in the header to read 'SITUATION MONITOR RADIO' in all places where the app name appears (AppHeader.tsx, page title, and any other visible instances).",
-      "reqIds": [
-        "REQ-14"
       ],
       "version": 1
     }
@@ -129,67 +32,19 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Cockpit/HUD-style visual interface with radar displays, tactical overlays, and gauges",
+      "summary": "Change globe background to black to match the rest of the app",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Radio Browser API integration for streaming free stations worldwide",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-3",
-      "summary": "Search stations by genre and country",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-4",
-      "summary": "Favorites/bookmarks for stations",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-5",
-      "summary": "Mission-briefing-style now-playing display",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-6",
-      "summary": "Dieter Rams × Military minimalist aesthetic: tightened proportions, purposeful spacing, Doto font on key elements",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-7",
-      "summary": "Audio-reactive visuals using Web Audio API — frequency-based visualizer integrated with radar indicator",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-8",
-      "summary": "Bottom toolbar refinement: centered play/pause, dark mode toggle, meatball menu",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-9",
-      "summary": "Network resilience: auto-reconnect on stream stall, retry logic, stream health monitoring",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-10",
-      "summary": "Station persistence: save last-played station to localStorage and restore on reload",
+      "summary": "Ensure all stations load on the globe, especially the currently playing station",
       "reqIds": [],
       "status": "pending"
     }
   ],
   "gameProjectType": "none",
-  "projectName": "Military Aircraft Radio",
+  "projectName": "Antenna Radio",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

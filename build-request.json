@@ -1,34 +1,56 @@
 {
   "kind": "build_request",
-  "title": "Update app title to SITUATION MONITOR RADIO",
-  "projectName": "Situation Monitor Radio",
+  "title": "Black globe background + ensure all stations load including currently playing",
+  "projectName": "Antenna Radio",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-14",
-      "text": "Update the app title displayed in the header to read 'SITUATION MONITOR RADIO' in all places where the app name appears (AppHeader.tsx, page title, and any other visible instances).",
+      "id": "REQ-1",
+      "text": "Change the GlobeView and FullscreenGlobe component backgrounds from their current color to solid black (#000000) so the globe matches the rest of the app's dark background, while preserving all existing globe styling, markers, rings, and orbit controls.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4",
-          "msg-5"
+          "msg-4"
         ],
         "quotes": [
-          "It should say situation monitor radio then we take it live",
-          "updating the title to SITUATION MONITOR RADIO"
+          "keep the globe style, but make the bg black like the rest of the app"
         ]
       },
       "acceptanceCriteria": [
-        "The AppHeader displays 'SITUATION MONITOR RADIO' as the app title",
-        "No other app name variants (e.g., 'Squadron Radio') appear anywhere in the UI",
-        "The browser tab title (document title / index.html) also reflects 'SITUATION MONITOR RADIO'"
+        "The Three.js scene background in GlobeView is set to black",
+        "The Three.js scene background in FullscreenGlobe is set to black",
+        "Any canvas or container wrapper background behind the globe is also black",
+        "All existing markers, rings, Earth texture, and orbit controls remain unchanged"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Ensure the globe view loads and displays all available stations without missing entries. The currently playing station must always appear as a marker on the globe — if it is not already in the fetched globe station list, it must be added to the rendered markers regardless.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "it's still missing some stations, it should load the station playing especially"
+        ]
+      },
+      "acceptanceCriteria": [
+        "The currently playing station is always rendered as a marker on the globe even if the API did not return it in the globe station list",
+        "The globe fetches the maximum number of stations supported (up to 500) to minimize missing entries",
+        "American stations that have valid geo coordinates appear on the globe",
+        "No station with valid lat/lng is silently dropped from the rendered markers"
       ]
     }
   ],
-  "constraints": [],
+  "constraints": [
+    "Do not alter the globe's Earth texture, marker design, pulsing ring animation, or orbit controls",
+    "Do not modify files listed in frontend.immutablePaths"
+  ],
   "nonGoals": [
-    "Changing any visual styling or layout beyond the title text",
-    "Modifying backend logic"
+    "Redesigning the globe visual style beyond background color",
+    "Adding new globe interaction features",
+    "Changing backend station data or favorites logic"
   ],
   "imageRequirements": {
     "required": [],

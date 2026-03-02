@@ -55,8 +55,8 @@ export function StationList({
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center h-full gap-3">
-        <Loader size={20} className="hud-text animate-spin" />
-        <span className="hud-text-dim text-[10px] tracking-widest">Scanning frequencies...</span>
+        <Loader size={18} className="text-dim animate-spin" />
+        <span className="text-xs text-dim">Loading stations...</span>
       </div>
     );
   }
@@ -64,15 +64,15 @@ export function StationList({
   if (stations.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-full gap-2">
-        <Radio size={20} className="hud-text-dim opacity-50" />
-        <span className="hud-text-dim text-[10px] tracking-wide">{emptyMessage}</span>
+        <Radio size={18} className="text-dim opacity-40" />
+        <span className="text-xs text-dim">{emptyMessage}</span>
       </div>
     );
   }
 
   return (
     <ScrollArea className="h-full">
-      <div className="divide-y divide-hud-border/40">
+      <div className="divide-y divide-neutral-border/50">
         {stations.map((s, idx) => {
           const station = isRadioStation(s) ? s : toRadioStation(s);
           const isActive =
@@ -85,33 +85,34 @@ export function StationList({
           return (
             <div
               key={station.stationuuid || idx}
-              className={`group flex items-center gap-2 px-3 py-2 cursor-pointer transition-all ${
-                isActive ? 'station-row-active' : 'hover:bg-hud-green/5'
+              className={`group flex items-center gap-3 px-4 py-2.5 cursor-pointer transition-colors ${
+                isActive
+                  ? 'station-row-active'
+                  : 'hover:bg-neutral-hover'
               }`}
               onClick={() => onPlay(station)}
             >
               {/* Play indicator */}
               <div className="w-4 h-4 flex items-center justify-center shrink-0">
                 {isCurrentlyLoading ? (
-                  <Loader size={10} className="hud-text-amber animate-spin" />
+                  <Loader size={10} className="text-dim animate-spin" />
                 ) : isCurrentlyPlaying ? (
                   <div className="flex items-end gap-px h-3">
                     {[1, 2, 3].map(i => (
                       <div
                         key={i}
-                        className="w-0.5"
+                        className="w-0.5 bg-foreground"
                         style={{
                           height: '100%',
                           animation: `signal-bar ${0.5 + i * 0.1}s ease-in-out infinite`,
                           animationDelay: `${i * 0.1}s`,
-                          backgroundColor: 'oklch(0.72 0.22 145)',
-                          boxShadow: '0 0 3px oklch(0.72 0.22 145)',
+                          opacity: 0.7,
                         }}
                       />
                     ))}
                   </div>
                 ) : (
-                  <Play size={10} className="hud-text-dim opacity-0 group-hover:opacity-60 transition-opacity" />
+                  <Play size={10} className="text-dim opacity-0 group-hover:opacity-50 transition-opacity" />
                 )}
               </div>
 
@@ -120,19 +121,19 @@ export function StationList({
                 <img
                   src={station.favicon}
                   alt=""
-                  className="w-4 h-4 object-contain shrink-0 opacity-60"
+                  className="w-4 h-4 object-contain shrink-0 opacity-50"
                   onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
                 />
               ) : (
-                <Radio size={11} className="hud-text-dim shrink-0 opacity-30" />
+                <Radio size={11} className="text-dim shrink-0 opacity-25" />
               )}
 
               {/* Station info */}
               <div className="flex-1 min-w-0">
-                <div className={`text-[11px] truncate ${isActive ? 'hud-text-bright font-semibold' : 'hud-text'}`}>
+                <div className={`text-xs truncate font-medium ${isActive ? 'text-foreground' : 'text-foreground/80'}`}>
                   {station.name}
                 </div>
-                <div className="flex items-center gap-1.5 text-[9px] hud-text-dim">
+                <div className="flex items-center gap-1.5 text-[10px] text-dim mt-0.5">
                   {station.country && <span>{station.country}</span>}
                   {station.codec && <span className="opacity-60">{station.codec}</span>}
                   {station.bitrate > 0 && <span className="opacity-60">{station.bitrate}k</span>}
@@ -149,10 +150,10 @@ export function StationList({
                     onAddFavorite(station);
                   }
                 }}
-                className={`p-1 transition-all shrink-0 ${
+                className={`p-1 transition-all shrink-0 rounded ${
                   isFav
-                    ? 'hud-text-amber'
-                    : 'hud-text-dim opacity-0 group-hover:opacity-60 hover:hud-text-amber'
+                    ? 'text-foreground opacity-80'
+                    : 'text-dim opacity-0 group-hover:opacity-40 hover:opacity-80'
                 }`}
                 aria-label={isFav ? 'Remove from saved' : 'Save station'}
               >

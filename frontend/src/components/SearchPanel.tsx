@@ -54,7 +54,7 @@ export function SearchPanel({ onSearch, isLoading, currentParams }: SearchPanelP
   const hasAny = tag || country || name;
 
   return (
-    <div className="px-3 py-2 space-y-2">
+    <div className="px-4 py-3 space-y-3">
       {/* Name */}
       <input
         type="text"
@@ -62,19 +62,19 @@ export function SearchPanel({ onSearch, isLoading, currentParams }: SearchPanelP
         onChange={e => setName(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder="Station name..."
-        className="w-full px-2 py-1.5 text-[11px] bg-hud-bg border border-hud-border hud-text focus:border-hud-green outline-none transition-all"
+        className="w-full px-3 py-2 text-sm rounded border border-neutral-border bg-neutral-panel text-foreground placeholder:text-dim focus:border-muted-foreground outline-none transition-colors"
       />
 
       {/* Tag quick-select */}
-      <div className="flex flex-wrap gap-1">
+      <div className="flex flex-wrap gap-1.5">
         {POPULAR_TAGS.map(t => (
           <button
             key={t}
             onClick={() => { setTag(t); onSearch({ tag: t, country, name }); }}
-            className={`px-1.5 py-0.5 text-[9px] tracking-wide border transition-all ${
+            className={`px-2.5 py-1 text-[11px] font-medium rounded-full border transition-colors ${
               tag === t
-                ? 'border-hud-green hud-text bg-hud-green/10'
-                : 'border-hud-border hud-text-dim hover:border-hud-green/40'
+                ? 'border-neutral-text text-foreground bg-neutral-active'
+                : 'border-neutral-border text-dim hover:border-muted-foreground hover:text-foreground'
             }`}
           >
             {t}
@@ -91,16 +91,16 @@ export function SearchPanel({ onSearch, isLoading, currentParams }: SearchPanelP
           onFocus={() => setShowCountryDropdown(true)}
           onKeyDown={handleKeyDown}
           placeholder="Country..."
-          className="w-full px-2 py-1.5 text-[11px] bg-hud-bg border border-hud-border hud-text focus:border-hud-green outline-none transition-all pr-6"
+          className="w-full px-3 py-2 text-sm rounded border border-neutral-border bg-neutral-panel text-foreground placeholder:text-dim focus:border-muted-foreground outline-none transition-colors pr-7"
         />
-        <ChevronDown size={10} className="absolute right-2 top-1/2 -translate-y-1/2 hud-text-dim pointer-events-none" />
+        <ChevronDown size={12} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-dim pointer-events-none" />
         {showCountryDropdown && filteredCountries.length > 0 && (
-          <div className="absolute top-full left-0 right-0 z-50 bg-hud-panel border border-hud-border max-h-32 overflow-y-auto">
+          <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-neutral-panel border border-neutral-border rounded max-h-36 overflow-y-auto shadow-lg">
             {filteredCountries.map(c => (
               <button
                 key={c.name}
                 onClick={() => { setCountry(c.name); setShowCountryDropdown(false); onSearch({ tag, country: c.name, name }); }}
-                className="w-full text-left px-2 py-1 text-[10px] hud-text-dim hover:hud-text hover:bg-hud-green/10 transition-colors"
+                className="w-full text-left px-3 py-1.5 text-xs text-dim hover:text-foreground hover:bg-neutral-hover transition-colors"
               >
                 {c.name}
               </button>
@@ -114,16 +114,16 @@ export function SearchPanel({ onSearch, isLoading, currentParams }: SearchPanelP
         <button
           onClick={handleSearch}
           disabled={isLoading}
-          className="flex-1 py-1.5 font-orbitron text-[10px] tracking-widest border border-hud-green hud-text bg-hud-green/10 hover:bg-hud-green/20 transition-all disabled:opacity-50"
+          className="flex-1 py-2 text-xs font-medium rounded border border-neutral-border text-foreground bg-neutral-active hover:bg-neutral-hover transition-colors disabled:opacity-40"
         >
-          {isLoading ? 'Scanning...' : 'Search'}
+          {isLoading ? 'Searching...' : 'Search'}
         </button>
         {hasAny && (
           <button
             onClick={handleClear}
-            className="px-2 py-1.5 border border-hud-border hud-text-dim hover:border-hud-green/50 hover:hud-text transition-all"
+            className="px-3 py-2 rounded border border-neutral-border text-dim hover:text-foreground hover:bg-neutral-hover transition-colors"
           >
-            <X size={12} />
+            <X size={13} />
           </button>
         )}
       </div>

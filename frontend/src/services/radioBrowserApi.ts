@@ -37,6 +37,47 @@ export async function fetchTopStations(limit = 60): Promise<RadioStation[]> {
   return res.json();
 }
 
+/**
+ * Fetches a broad set of stations for the globe view, pulling from multiple
+ * regions to ensure good geographic coverage including the United States.
+ * Returns up to ~500 stations with valid country data.
+ */
+export async function fetchGlobeStations(): Promise<RadioStation[]> {
+  // Fetch two batches: top by votes and top by clickcount, then deduplicate
+  // This maximises geographic diversity and ensures popular stations from all regions appear
+  const [byVotes, byClicks] = await Promise.all([
+    fetch(
+      `${BASE_URL}/json/stations/search?${new URLSearchParams({
+        order: 'votes',
+        reverse: 'true',
+        limit: '500',
+        hidebroken: 'true',
+      })}`,
+      { headers: defaultHeaders }
+    ).then((r) => (r.ok ? (r.json() as Promise<RadioStation[]>) : [])),
+    fetch(
+      `${BASE_URL}/json/stations/search?${new URLSearchParams({
+        order: 'clickcount',
+        reverse: 'true',
+        limit: '500',
+        hidebroken: 'true',
+      })}`,
+      { headers: defaultHeaders }
+    ).then((r) => (r.ok ? (r.json() as Promise<RadioStation[]>) : [])),
+  ]);
+
+  // Deduplicate by stationuuid, keeping first occurrence
+  const seen = new Set<string>();
+  const combined: RadioStation[] = [];
+  for (const station of [...byVotes, ...byClicks]) {
+    if (!seen.has(station.stationuuid) && station.country && station.country.trim().length > 0) {
+      seen.add(station.stationuuid);
+      combined.push(station);
+    }
+  }
+  return combined;
+}
+
 export async function searchStations(params: {
   tag?: string;
   country?: string;

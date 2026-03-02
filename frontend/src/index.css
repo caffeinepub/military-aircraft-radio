@@ -4,199 +4,128 @@
 
 @layer base {
   :root {
-    --radius: 0.125rem;
-    --background: 0.1 0.012 145;
-    --foreground: 0.85 0.12 145;
-    --card: 0.13 0.015 145;
-    --card-foreground: 0.85 0.12 145;
-    --popover: 0.15 0.018 145;
-    --popover-foreground: 0.85 0.12 145;
-    --primary: 0.72 0.18 145;
-    --primary-foreground: 0.08 0.01 145;
-    --secondary: 0.18 0.022 145;
-    --secondary-foreground: 0.72 0.18 145;
-    --muted: 0.16 0.014 145;
-    --muted-foreground: 0.45 0.08 145;
-    --accent: 0.65 0.22 145;
-    --accent-foreground: 0.08 0.01 145;
-    --destructive: 0.55 0.22 25;
-    --destructive-foreground: 0.98 0 0;
-    --border: 0.25 0.055 145;
-    --input: 0.18 0.035 145;
-    --ring: 0.72 0.18 145;
-    --chart-1: 0.72 0.18 145;
-    --chart-2: 0.65 0.2 80;
-    --chart-3: 0.6 0.18 200;
-    --chart-4: 0.7 0.2 60;
-    --chart-5: 0.65 0.22 25;
-    --sidebar: 0.12 0.014 145;
-    --sidebar-foreground: 0.85 0.12 145;
-    --sidebar-primary: 0.72 0.18 145;
-    --sidebar-primary-foreground: 0.08 0.01 145;
-    --sidebar-accent: 0.18 0.022 145;
-    --sidebar-accent-foreground: 0.72 0.18 145;
-    --sidebar-border: 0.25 0.055 145;
-    --sidebar-ring: 0.72 0.18 145;
+    /* Dark monochrome palette — near-black backgrounds */
+    --background: 0.12 0 0;
+    --foreground: 0.95 0 0;
 
-    /* HUD tokens */
-    --hud-green: oklch(0.72 0.22 145);
-    --hud-green-dim: oklch(0.42 0.12 145);
-    --hud-green-bright: oklch(0.88 0.26 145);
-    --hud-amber: oklch(0.75 0.18 80);
-    --hud-amber-dim: oklch(0.5 0.12 80);
-    --hud-bg: oklch(0.1 0.012 145);
-    --hud-panel: oklch(0.13 0.015 145);
-    --hud-border: oklch(0.25 0.055 145);
-    --hud-glow: 0 0 6px oklch(0.72 0.22 145 / 0.5);
+    --card: 0.15 0 0;
+    --card-foreground: 0.95 0 0;
 
-    /* Light mode overrides (applied via .light class) */
-    --hud-bg-light: oklch(0.96 0.008 145);
-    --hud-panel-light: oklch(0.92 0.01 145);
-    --hud-border-light: oklch(0.7 0.06 145);
-    --hud-green-light: oklch(0.38 0.18 145);
-    --hud-green-dim-light: oklch(0.55 0.1 145);
-    --hud-green-bright-light: oklch(0.25 0.22 145);
-    --hud-amber-light: oklch(0.5 0.18 80);
+    --popover: 0.14 0 0;
+    --popover-foreground: 0.95 0 0;
+
+    --primary: 0.95 0 0;
+    --primary-foreground: 0.10 0 0;
+
+    --secondary: 0.20 0 0;
+    --secondary-foreground: 0.85 0 0;
+
+    --muted: 0.18 0 0;
+    --muted-foreground: 0.55 0 0;
+
+    --accent: 0.22 0 0;
+    --accent-foreground: 0.90 0 0;
+
+    --destructive: 0.50 0.18 25;
+    --destructive-foreground: 0.95 0 0;
+
+    --border: 0.22 0 0;
+    --input: 0.20 0 0;
+    --ring: 0.70 0 0;
+
+    --radius: 0.375rem;
   }
 
   .light {
-    --background: 0.96 0.008 145;
-    --foreground: 0.25 0.12 145;
-    --card: 0.92 0.01 145;
-    --card-foreground: 0.25 0.12 145;
-    --popover: 0.94 0.01 145;
-    --popover-foreground: 0.25 0.12 145;
-    --primary: 0.38 0.18 145;
-    --primary-foreground: 0.96 0.008 145;
-    --secondary: 0.88 0.015 145;
-    --secondary-foreground: 0.38 0.18 145;
-    --muted: 0.9 0.012 145;
-    --muted-foreground: 0.55 0.1 145;
-    --accent: 0.38 0.18 145;
-    --accent-foreground: 0.96 0.008 145;
-    --border: 0.7 0.06 145;
-    --input: 0.88 0.015 145;
-    --ring: 0.38 0.18 145;
+    --background: 0.97 0 0;
+    --foreground: 0.10 0 0;
 
-    --hud-green: oklch(0.38 0.18 145);
-    --hud-green-dim: oklch(0.55 0.1 145);
-    --hud-green-bright: oklch(0.25 0.22 145);
-    --hud-amber: oklch(0.5 0.18 80);
-    --hud-amber-dim: oklch(0.6 0.12 80);
-    --hud-bg: oklch(0.96 0.008 145);
-    --hud-panel: oklch(0.92 0.01 145);
-    --hud-border: oklch(0.7 0.06 145);
-    --hud-glow: 0 0 6px oklch(0.38 0.18 145 / 0.3);
+    --card: 0.95 0 0;
+    --card-foreground: 0.10 0 0;
+
+    --popover: 0.97 0 0;
+    --popover-foreground: 0.10 0 0;
+
+    --primary: 0.12 0 0;
+    --primary-foreground: 0.97 0 0;
+
+    --secondary: 0.90 0 0;
+    --secondary-foreground: 0.15 0 0;
+
+    --muted: 0.92 0 0;
+    --muted-foreground: 0.45 0 0;
+
+    --accent: 0.88 0 0;
+    --accent-foreground: 0.12 0 0;
+
+    --destructive: 0.50 0.18 25;
+    --destructive-foreground: 0.97 0 0;
+
+    --border: 0.85 0 0;
+    --input: 0.88 0 0;
+    --ring: 0.30 0 0;
   }
+}
 
+@layer base {
   * {
     @apply border-border;
   }
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Share Tech Mono', monospace;
-    background-color: var(--hud-bg);
-    overflow-x: hidden;
+    font-family: "Inter", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .font-heading {
+    font-family: "Fredoka One", cursive;
+  }
+
+  h1, h2, h3 {
+    font-family: "Fredoka One", cursive;
   }
 }
 
-@layer utilities {
-  .hud-text {
-    color: var(--hud-green);
-    text-shadow: var(--hud-glow);
-  }
-
-  .hud-text-bright {
-    color: var(--hud-green-bright);
-    text-shadow: 0 0 8px oklch(0.72 0.22 145 / 0.6);
-  }
-
-  .light .hud-text-bright {
-    text-shadow: 0 0 4px oklch(0.38 0.18 145 / 0.3);
-  }
-
-  .hud-text-dim {
-    color: var(--hud-green-dim);
-  }
-
-  .hud-text-amber {
-    color: var(--hud-amber);
-  }
-
-  .hud-panel {
-    background-color: var(--hud-panel);
-    border: 1px solid var(--hud-border);
-  }
-
-  .font-orbitron {
-    font-family: 'Orbitron', sans-serif;
-  }
-
-  .font-doto {
-    font-family: 'Doto', monospace;
-  }
-
-  .station-row-active {
-    background: oklch(0.72 0.22 145 / 0.1);
-    border-left: 2px solid var(--hud-green);
-  }
-
-  .light .station-row-active {
-    background: oklch(0.38 0.18 145 / 0.08);
-    border-left: 2px solid var(--hud-green);
-  }
-}
-
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
-
-@keyframes signal-bar {
-  0%, 100% { transform: scaleY(0.3); }
-  50% { transform: scaleY(1); }
-}
-
-.animate-blink {
-  animation: blink 1s step-end infinite;
-}
-
-/* Custom scrollbar */
+/* Scrollbar */
 ::-webkit-scrollbar {
-  width: 3px;
-  height: 3px;
+  width: 4px;
 }
-
 ::-webkit-scrollbar-track {
-  background: var(--hud-bg);
+  background: transparent;
 }
-
 ::-webkit-scrollbar-thumb {
-  background: var(--hud-border);
-  border-radius: 0;
+  background: oklch(0.30 0 0);
+  border-radius: 2px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--hud-green-dim);
+  background: oklch(0.45 0 0);
 }
 
-/* Input overrides */
-input, select, textarea {
-  background-color: var(--hud-panel) !important;
-  color: var(--hud-green) !important;
-  border-color: var(--hud-border) !important;
-  font-family: 'Share Tech Mono', monospace !important;
-  border-radius: 0 !important;
+/* Input autofill override */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px oklch(0.18 0 0) inset;
+  -webkit-text-fill-color: oklch(0.90 0 0);
+  transition: background-color 5000s ease-in-out 0s;
 }
 
-input::placeholder {
-  color: var(--hud-green-dim) !important;
-  opacity: 0.5;
+/* Animate in utility */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-input:focus, select:focus {
-  outline: none !important;
-  border-color: var(--hud-green) !important;
-  box-shadow: 0 0 6px oklch(0.72 0.22 145 / 0.3) !important;
+.animate-in {
+  animation-fill-mode: both;
+}
+
+.fade-in {
+  animation-name: fade-in;
+}
+
+.duration-300 {
+  animation-duration: 300ms;
 }
