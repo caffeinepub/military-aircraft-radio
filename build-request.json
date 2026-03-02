@@ -1,56 +1,53 @@
 {
   "kind": "build_request",
-  "title": "Black globe background + ensure all stations load including currently playing",
-  "projectName": "Antenna Radio",
-  "priority": "normal",
+  "title": "Cycle slogans in Globe tab + fix perpetual loading bug in Stations tab",
+  "priority": "high",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Change the GlobeView and FullscreenGlobe component backgrounds from their current color to solid black (#000000) so the globe matches the rest of the app's dark background, while preserving all existing globe styling, markers, rings, and orbit controls.",
+      "text": "Add the same cycling anti-subscription slogans (with fade transitions) to the GlobeView tab, matching the behavior already implemented in NowPlayingPanel and FullscreenOverlay.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-4"
         ],
         "quotes": [
-          "keep the globe style, but make the bg black like the rest of the app"
+          "cycle the slogans in the globe tab too"
         ]
       },
       "acceptanceCriteria": [
-        "The Three.js scene background in GlobeView is set to black",
-        "The Three.js scene background in FullscreenGlobe is set to black",
-        "Any canvas or container wrapper background behind the globe is also black",
-        "All existing markers, rings, Earth texture, and orbit controls remain unchanged"
+        "Slogans are visible in the Globe tab and rotate through the same list used in NowPlayingPanel/FullscreenOverlay",
+        "Transitions use the same fade effect as the existing slogan cycling implementation",
+        "Slogan display does not obstruct globe interaction (markers, hover tooltips, OrbitControls)"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Ensure the globe view loads and displays all available stations without missing entries. The currently playing station must always appear as a marker on the globe — if it is not already in the fetched globe station list, it must be added to the rendered markers regardless.",
+      "text": "Fix the perpetual loading state for stations in the main (Stations) tab. Stations should either display correctly or show a clear error state — they must not remain stuck in a loading spinner indefinitely.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-4"
         ],
         "quotes": [
-          "it's still missing some stations, it should load the station playing especially"
+          "currently stations are perpetually loading in the main tab, seems like a bug"
         ]
       },
       "acceptanceCriteria": [
-        "The currently playing station is always rendered as a marker on the globe even if the API did not return it in the globe station list",
-        "The globe fetches the maximum number of stations supported (up to 500) to minimize missing entries",
-        "American stations that have valid geo coordinates appear on the globe",
-        "No station with valid lat/lng is silently dropped from the rendered markers"
+        "Opening the Stations tab resolves to either a populated station list or a visible error/empty state within a reasonable timeout",
+        "No infinite loading spinner is shown when the Radio Browser API has returned data or an error",
+        "Retry logic or fallback handling is in place if the initial fetch fails"
       ]
     }
   ],
   "constraints": [
-    "Do not alter the globe's Earth texture, marker design, pulsing ring animation, or orbit controls",
-    "Do not modify files listed in frontend.immutablePaths"
+    "Do not modify files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui",
+    "Slogan list and cycling logic must remain consistent with the existing implementation in NowPlayingPanel and FullscreenOverlay — extract shared logic if needed rather than duplicating divergent copies"
   ],
   "nonGoals": [
-    "Redesigning the globe visual style beyond background color",
-    "Adding new globe interaction features",
-    "Changing backend station data or favorites logic"
+    "Changing the slogan content or timing intervals",
+    "Redesigning the Globe tab layout",
+    "Modifying backend station storage or favorites logic"
   ],
   "imageRequirements": {
     "required": [],

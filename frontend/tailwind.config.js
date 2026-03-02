@@ -5,8 +5,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Inter", "system-ui", "sans-serif"],
-        heading: ["Fredoka One", "cursive"],
+        sans: ["Space Grotesk", "system-ui", "sans-serif"],
+        heading: ["Space Mono", "monospace"],
+        mono: ["Space Mono", "monospace"],
       },
       colors: {
         background: "oklch(var(--background) / <alpha-value>)",

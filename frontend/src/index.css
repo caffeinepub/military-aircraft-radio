@@ -74,17 +74,17 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: "Inter", system-ui, sans-serif;
+    font-family: "Space Grotesk", system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   .font-heading {
-    font-family: "Fredoka One", cursive;
+    font-family: "Space Mono", monospace;
   }
 
   h1, h2, h3 {
-    font-family: "Fredoka One", cursive;
+    font-family: "Space Mono", monospace;
   }
 }
 

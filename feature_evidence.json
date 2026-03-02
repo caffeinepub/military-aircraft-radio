@@ -1,43 +1,4 @@
 {
   "kind": "feature_evidence_report",
-  "features": [
-    {
-      "featureId": "feature-change-the-globeview-and-fullscreenglobe-component-backgrounds-from-their-current-color-to-solid-black-000000-so-the-globe-matches-the-rest-of-the-app-s-dark-background-while-preserving-all-existing-globe-styling-markers-rings-and-orbit-controls",
-      "featureTitle": "Change the GlobeView and FullscreenGlobe component backgrounds from their current color to solid black (#000000) so the globe matches the rest of the app's dark background, while preserving all existing globe styling, markers, rings, and orbit controls.",
-      "files": [
-        "frontend/src/components/FullscreenGlobe.tsx",
-        "frontend/src/components/GlobeView.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-1"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-ensure-the-globe-view-loads-and-displays-all-available-stations-without-missing-entries-the-currently-playing-station-must-always-appear-as-a-marker-on-the-globe-if-it-is-not-already-in-the-fetched-globe-station-list-it-must-be-added-to-the-rendered-markers-regardless",
-      "featureTitle": "Ensure the globe view loads and displays all available stations without missing entries. The currently playing station must always appear as a marker on the globe — if it is not already in the fetched globe station list, it must be added to the rendered markers regardless.",
-      "files": [
-        "frontend/src/components/GlobeView.tsx",
-        "frontend/src/services/radioBrowserApi.ts"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-2"
-      ],
-      "confidence": "high"
-    }
-  ]
+  "features": []
 }

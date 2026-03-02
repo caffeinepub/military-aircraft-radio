@@ -1,54 +1,57 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Black globe background + ensure all stations load including currently playing",
+  "title": "Cycle slogans in Globe tab + fix perpetual loading bug in Stations tab",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Change GlobeView and FullscreenGlobe component backgrounds to solid black (#000000) while preserving all existing globe styling, markers, rings, and orbit controls",
+      "summary": "Add cycling anti-subscription slogans with fade transitions to the GlobeView tab, matching the existing implementation in NowPlayingPanel and FullscreenOverlay",
       "acceptanceCriteria": [
-        "The Three.js scene background in GlobeView is set to black",
-        "The Three.js scene background in FullscreenGlobe is set to black",
-        "Any canvas or container wrapper background behind the globe is also black",
-        "All existing markers, rings, Earth texture, and orbit controls remain unchanged"
+        "Slogans are visible in the Globe tab and rotate through the same list used in NowPlayingPanel/FullscreenOverlay",
+        "Transitions use the same fade effect as the existing slogan cycling implementation",
+        "Slogan display does not obstruct globe interaction (markers, hover tooltips, OrbitControls)"
       ],
       "file_operations": [
         {
           "path": "frontend/src/components/GlobeView.tsx",
           "operation": "modify",
-          "description": "Set the Three.js scene background color to black (#000000) using scene.background = new THREE.Color(0x000000). Ensure the Canvas component and any parent containers also use black backgrounds to prevent color bleeding. Do not alter the Earth texture, markers, rings, or OrbitControls configuration."
+          "description": "Add a slogan cycling section positioned below or around the globe that uses the same slogan list and fade transition logic as NowPlayingPanel and FullscreenOverlay. Extract shared slogan logic into a reusable hook if not already present. Position the slogan text to avoid obstructing the interactive globe elements (markers, tooltips, OrbitControls). Verify the existing slogan implementation in NowPlayingPanel and FullscreenOverlay to maintain consistency in timing and fade effect."
         },
         {
-          "path": "frontend/src/components/FullscreenGlobe.tsx",
+          "path": "frontend/src/hooks/useSlogans.ts",
+          "operation": "create",
+          "description": "Create a custom hook that encapsulates the slogan cycling logic (slogan list, interval timing, fade state management) extracted from NowPlayingPanel and FullscreenOverlay. This hook should return the current slogan and fade state to ensure consistent behavior across all three components (NowPlayingPanel, FullscreenOverlay, GlobeView). Use the same interval and transition settings as the existing implementations."
+        },
+        {
+          "path": "frontend/src/components/NowPlayingPanel.tsx",
           "operation": "modify",
-          "description": "Set the Three.js scene background color to black (#000000) using scene.background = new THREE.Color(0x000000). Ensure the Canvas component and any wrapper divs use black backgrounds. Preserve all existing marker positioning, pulsing ring animation, and visual effects."
+          "description": "Refactor to use the new useSlogans hook instead of inline slogan cycling logic, ensuring the behavior remains identical to the current implementation. Remove duplicated slogan list and cycling code, replacing it with the shared hook."
+        },
+        {
+          "path": "frontend/src/components/FullscreenOverlay.tsx",
+          "operation": "modify",
+          "description": "Refactor to use the new useSlogans hook instead of inline slogan cycling logic, ensuring the behavior remains identical to the current implementation. Remove duplicated slogan list and cycling code, replacing it with the shared hook."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Ensure the globe view loads and displays all available stations including the currently playing station as a marker, even if it is not in the fetched globe station list",
+      "summary": "Fix the perpetual loading state in the Stations tab by ensuring the loading spinner resolves to either a populated station list or a clear error/empty state",
       "acceptanceCriteria": [
-        "The currently playing station is always rendered as a marker on the globe even if the API did not return it in the globe station list",
-        "The globe fetches the maximum number of stations supported (up to 500) to minimize missing entries",
-        "American stations that have valid geo coordinates appear on the globe",
-        "No station with valid lat/lng is silently dropped from the rendered markers"
+        "Opening the Stations tab resolves to either a populated station list or a visible error/empty state within a reasonable timeout",
+        "No infinite loading spinner is shown when the Radio Browser API has returned data or an error",
+        "Retry logic or fallback handling is in place if the initial fetch fails"
       ],
       "file_operations": [
         {
           "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "In the globeStations React Query hook, ensure the API call fetches the maximum 500 stations (verify limit parameter in radioBrowserApi.getGlobeStations). After fetching globe stations, check if currentStation exists and has valid coordinates but is missing from the globe list. If so, merge currentStation into the globeStations array before passing to GlobeView. Ensure no duplicate station entries are added."
+          "description": "Review the stations data fetching logic and conditional rendering in the Stations tab view. Ensure that the loading state is properly tied to the data fetch lifecycle (pending, success, error). Add explicit error and empty state handling so that when the Radio Browser API returns an error or empty result, the UI shows a clear message instead of an infinite spinner. Verify that React Query's isLoading, isError, and data states are correctly checked before rendering the StationList. If the fetch is stuck, add a timeout or fallback mechanism to exit the loading state."
         },
         {
           "path": "frontend/src/services/radioBrowserApi.ts",
           "operation": "modify",
-          "description": "Review and confirm that getGlobeStations fetches up to 500 stations (the API maximum). If the current limit is lower, increase it to 500. Ensure the function filters out stations with invalid or missing lat/lng coordinates to prevent rendering errors on the globe."
-        },
-        {
-          "path": "frontend/src/components/GlobeView.tsx",
-          "operation": "modify",
-          "description": "Ensure all stations passed via props with valid geo_lat and geo_long are rendered as markers. Verify that no station is silently dropped during marker creation. If a station lacks coordinates, log a warning but do not render a marker for it. Confirm raycasting and hover interactions work correctly with the expanded station list."
+          "description": "Review the Radio Browser API service methods to ensure they properly handle network errors, timeouts, and empty responses. Add explicit error throwing or rejection for failed requests so that React Query can detect and surface the error state. Ensure that promises resolve or reject in all code paths to prevent hanging requests that could cause perpetual loading."
         }
       ]
     }

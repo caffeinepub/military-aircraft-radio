@@ -1,12 +1,10 @@
 # Specification
 
 ## Summary
-**Goal:** Make the globe background solid black to match the app's dark theme, and ensure all stations (including the currently playing one) are always displayed as markers on the globe.
+**Goal:** Add cycling slogans with fade transitions to the Globe tab and fix the perpetual loading bug in the Stations tab.
 
 **Planned changes:**
-- Set the Three.js scene background to black (`#000000`) in both `GlobeView` and `FullscreenGlobe` components
-- Set any canvas or container wrapper background behind the globe to black as well
-- Ensure the currently playing station is always added as a marker on the globe, even if it was not returned in the fetched station list
-- Increase the station fetch limit to the maximum supported (up to 500) to minimize missing entries
+- Add the same anti-subscription slogan cycling (with fade transitions) to the GlobeView tab, reusing the shared logic from NowPlayingPanel and FullscreenOverlay, positioned so it does not obstruct globe interaction
+- Fix the Stations tab perpetual loading state so it resolves to either a populated station list or a clear error/empty state, with retry or fallback handling if the fetch fails
 
-**User-visible outcome:** The globe now has a black background consistent with the rest of the app, and all stations with valid coordinates — including the currently playing station — appear as markers on the globe.
+**User-visible outcome:** Users see rotating slogans in the Globe tab matching the existing behavior, and the Stations tab no longer gets stuck in an infinite loading spinner.

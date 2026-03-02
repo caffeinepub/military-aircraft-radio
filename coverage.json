@@ -1,52 +1,43 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-03-02T14:13:21.275Z",
+  "generatedAt": "2026-03-02T22:15:32.471Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
     "total": 2,
-    "implemented": 2,
+    "implemented": 0,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Change the GlobeView and FullscreenGlobe component backgrounds from their current color to solid black (#000000) so the globe matches the rest of the app's dark background, while preserving all existing globe styling, markers, rings, and orbit controls.",
-        "status": "implemented",
+        "summary": "Add the same cycling anti-subscription slogans (with fade transitions) to the GlobeView tab, matching the behavior already implemented in NowPlayingPanel and FullscreenOverlay.",
+        "status": "missing",
         "plannedFiles": [
           "frontend/src/components/GlobeView.tsx",
-          "frontend/src/components/FullscreenGlobe.tsx"
+          "frontend/src/hooks/useSlogans.ts",
+          "frontend/src/components/NowPlayingPanel.tsx",
+          "frontend/src/components/FullscreenOverlay.tsx"
         ],
-        "matchedFiles": [
-          "frontend/src/components/GlobeView.tsx",
-          "frontend/src/components/FullscreenGlobe.tsx"
-        ]
+        "matchedFiles": []
       },
       {
         "id": "REQ-2",
-        "summary": "Ensure the globe view loads and displays all available stations without missing entries. The currently playing station must always appear as a marker on the globe — if it is not already in the fetched globe station list, it must be added to the rendered markers regardless.",
-        "status": "implemented",
+        "summary": "Fix the perpetual loading state for stations in the main (Stations) tab. Stations should either display correctly or show a clear error state — they must not remain stuck in a loading spinner indefinitely.",
+        "status": "missing",
         "plannedFiles": [
           "frontend/src/App.tsx",
-          "frontend/src/services/radioBrowserApi.ts",
-          "frontend/src/components/GlobeView.tsx"
+          "frontend/src/services/radioBrowserApi.ts"
         ],
-        "matchedFiles": [
-          "frontend/src/services/radioBrowserApi.ts",
-          "frontend/src/components/GlobeView.tsx"
-        ]
+        "matchedFiles": []
       }
     ]
   },
   "changedFiles": [
     "build-request.json",
     "feature_evidence.json",
-    "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/components/FullscreenGlobe.tsx",
-    "frontend/src/components/GlobeView.tsx",
-    "frontend/src/services/radioBrowserApi.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

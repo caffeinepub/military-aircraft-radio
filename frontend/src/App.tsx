@@ -224,30 +224,6 @@ export default function App() {
           onToggleFullscreen={toggleFullscreen}
         />
 
-        {/* Footer */}
-        <footer className="shrink-0 border-t border-border px-4 py-2 flex items-center justify-between">
-          <span className="text-[10px] text-muted-foreground">
-            © {new Date().getFullYear()} Antenna
-          </span>
-          <span className="text-[10px] text-muted-foreground">
-            Built with{' '}
-            <span className="text-red-400">♥</span>{' '}
-            using{' '}
-            <a
-              href={`https://caffeine.ai/?utm_source=Caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(
-                typeof window !== 'undefined'
-                  ? window.location.hostname
-                  : 'antenna-radio'
-              )}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-foreground/60 hover:text-foreground transition-colors underline underline-offset-2"
-            >
-              caffeine.ai
-            </a>
-          </span>
-        </footer>
-
         {/* Fullscreen Overlay */}
         <FullscreenOverlay
           isOpen={isFullscreen}

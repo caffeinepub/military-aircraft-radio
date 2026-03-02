@@ -1,50 +1,38 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "A globe-based radio station app where a 3D globe displays stations, with a black background matching the rest of the app. The currently playing station should always be visible/loaded on the globe.",
-  "architectural_notes": [
-    "App uses a 3D globe to display radio stations; globe style should be preserved",
-    "App background is black; globe background must match"
-  ],
+  "summary": "App with a globe tab and main tab showing stations. Slogans cycle in the player view and should also cycle in the globe tab. Stations have a perpetual loading bug in the main tab.",
+  "architectural_notes": [],
   "known_issues": [
-    "Some stations (especially American ones) are missing from the globe display",
-    "Currently playing station may not load/appear on the globe"
+    "Stations are perpetually loading in the main tab"
   ],
   "isFixRequest": true,
-  "existing_features": [
-    {
-      "id": "feature-change-the-globeview-and-fullscreenglobe-component-backgrounds-from-their-current-color-to-solid-black-000000-so-the-globe-matches-the-rest-of-the-app-s-dark-background-while-preserving-all-existing-globe-styling-markers-rings-and-orbit-controls",
-      "title": "Change the GlobeView and FullscreenGlobe component backgrounds from their current color to solid black (#000000) so the globe matches the rest of the app's dark background, while preserving all existing globe styling, markers, rings, and orbit controls.",
-      "reqIds": [
-        "REQ-1"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-ensure-the-globe-view-loads-and-displays-all-available-stations-without-missing-entries-the-currently-playing-station-must-always-appear-as-a-marker-on-the-globe-if-it-is-not-already-in-the-fetched-globe-station-list-it-must-be-added-to-the-rendered-markers-regardless",
-      "title": "Ensure the globe view loads and displays all available stations without missing entries. The currently playing station must always appear as a marker on the globe — if it is not already in the fetched globe station list, it must be added to the rendered markers regardless.",
-      "reqIds": [
-        "REQ-2"
-      ],
-      "version": 1
-    }
-  ],
+  "existing_features": [],
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Change globe background to black to match the rest of the app",
+      "summary": "Cycle slogans in the globe tab",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Ensure all stations load on the globe, especially the currently playing station",
-      "reqIds": [],
+      "summary": "Add the same cycling anti-subscription slogans (with fade transitions) to the GlobeView tab, matching the behavior already implemented in NowPlayingPanel and FullscreenOverlay.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Fix the perpetual loading state for stations in the main (Stations) tab. Stations should either display correctly or show a clear error state — they must not remain stuck in a loading spinner indefinitely.",
+      "reqIds": [
+        "REQ-2"
+      ],
       "status": "pending"
     }
   ],
-  "gameProjectType": "none",
-  "projectName": "Antenna Radio",
+  "projectName": "Cycle slogans in Globe tab + fix perpetual loading bug in Stations tab",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

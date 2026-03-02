@@ -27,22 +27,30 @@ function latLngToVec3(lat: number, lng: number, radius: number): THREE.Vector3 {
   );
 }
 
+function getIsLight(): boolean {
+  return document.documentElement.classList.contains("light");
+}
+
 interface EarthSceneProps {
   stationPoints: StationPoint[];
   currentStation: RadioStation | null;
   onStationSelect: (station: RadioStation) => void;
   onHover: (station: RadioStation | null, pos: { x: number; y: number } | null) => void;
+  isLight: boolean;
 }
 
-function EarthScene({ stationPoints, currentStation, onStationSelect, onHover }: EarthSceneProps) {
+function EarthScene({ stationPoints, currentStation, onStationSelect, onHover, isLight }: EarthSceneProps) {
   const globeRef = useRef<THREE.Mesh>(null);
   const atmosphereRef = useRef<THREE.Mesh>(null);
   const pointsGroupRef = useRef<THREE.Group>(null);
-  const { camera, gl } = useThree();
+  const { camera, gl, scene } = useThree();
   const raycaster = useMemo(() => new THREE.Raycaster(), []);
   const mouse = useMemo(() => new THREE.Vector2(), []);
   const pointMeshes = useRef<Map<THREE.Mesh, StationPoint>>(new Map());
   const clockRef = useRef(new THREE.Clock());
+  const ambientRef = useRef<THREE.AmbientLight>(null);
+  const dirLight1Ref = useRef<THREE.DirectionalLight>(null);
+  const dirLight2Ref = useRef<THREE.DirectionalLight>(null);
 
   const earthTexture = useMemo(() => {
     const loader = new THREE.TextureLoader();
@@ -53,6 +61,46 @@ function EarthScene({ stationPoints, currentStation, onStationSelect, onHover }:
     const loader = new THREE.TextureLoader();
     return loader.load("//unpkg.com/three-globe/example/img/earth-topology.png");
   }, []);
+
+  // Update scene background and lights when theme changes
+  useEffect(() => {
+    if (isLight) {
+      scene.background = new THREE.Color(0xf0f4f8);
+      gl.setClearColor(0xf0f4f8, 1);
+    } else {
+      scene.background = new THREE.Color(0x000000);
+      gl.setClearColor(0x000000, 1);
+    }
+  }, [isLight, scene, gl]);
+
+  // Update atmosphere when theme changes
+  useEffect(() => {
+    if (!atmosphereRef.current) return;
+    const mat = atmosphereRef.current.material as THREE.MeshBasicMaterial;
+    if (isLight) {
+      mat.color.setHex(0x1a5fa8);
+      mat.opacity = 0.28;
+    } else {
+      mat.color.setHex(0x4488ff);
+      mat.opacity = 0.18;
+    }
+    mat.needsUpdate = true;
+  }, [isLight]);
+
+  // Update lights when theme changes
+  useEffect(() => {
+    if (ambientRef.current) {
+      ambientRef.current.intensity = isLight ? 2.5 : 1.2;
+    }
+    if (dirLight1Ref.current) {
+      dirLight1Ref.current.intensity = isLight ? 2.2 : 1.5;
+      dirLight1Ref.current.color.setHex(isLight ? 0xfff8f0 : 0xffffff);
+    }
+    if (dirLight2Ref.current) {
+      dirLight2Ref.current.intensity = isLight ? 0.8 : 0.4;
+      dirLight2Ref.current.color.setHex(isLight ? 0xaabbdd : 0x8899cc);
+    }
+  }, [isLight]);
 
   useFrame(() => {
     const t = clockRef.current.getElapsedTime();
@@ -128,7 +176,7 @@ function EarthScene({ stationPoints, currentStation, onStationSelect, onHover }:
       const isCurrent = currentStation && sp.station.name === currentStation.name;
       const geo = new THREE.SphereGeometry(isCurrent ? 0.035 : 0.022, 8, 8);
       const mat = new THREE.MeshBasicMaterial({
-        color: isCurrent ? 0xffdd44 : 0xffffff,
+        color: isCurrent ? 0xffdd44 : (isLight ? 0x1a3a6e : 0xffffff),
         transparent: true,
         opacity: isCurrent ? 1.0 : 0.9,
       });
@@ -137,7 +185,7 @@ function EarthScene({ stationPoints, currentStation, onStationSelect, onHover }:
       pointsGroupRef.current!.add(mesh);
       pointMeshes.current.set(mesh, sp);
     });
-  }, [stationPoints, currentStation]);
+  }, [stationPoints, currentStation, isLight]);
 
   return (
     <>
@@ -151,15 +199,30 @@ function EarthScene({ stationPoints, currentStation, onStationSelect, onHover }:
           shininess={15}
         />
       </mesh>
-      {/* Bright blue atmosphere glow */}
+      {/* Atmosphere glow — color/opacity updated via ref when theme changes */}
       <mesh ref={atmosphereRef} scale={[1.08, 1.08, 1.08]}>
         <sphereGeometry args={[1, 32, 32]} />
-        <meshBasicMaterial color={0x4488ff} transparent opacity={0.18} side={THREE.BackSide} />
+        <meshBasicMaterial
+          color={isLight ? 0x1a5fa8 : 0x4488ff}
+          transparent
+          opacity={isLight ? 0.28 : 0.18}
+          side={THREE.BackSide}
+        />
       </mesh>
       <group ref={pointsGroupRef} />
-      <ambientLight intensity={1.2} />
-      <directionalLight position={[5, 3, 5]} intensity={1.5} color={0xffffff} />
-      <directionalLight position={[-5, -2, -3]} intensity={0.4} color={0x8899cc} />
+      <ambientLight ref={ambientRef} intensity={isLight ? 2.5 : 1.2} />
+      <directionalLight
+        ref={dirLight1Ref}
+        position={[5, 3, 5]}
+        intensity={isLight ? 2.2 : 1.5}
+        color={isLight ? 0xfff8f0 : 0xffffff}
+      />
+      <directionalLight
+        ref={dirLight2Ref}
+        position={[-5, -2, -3]}
+        intensity={isLight ? 0.8 : 0.4}
+        color={isLight ? 0xaabbdd : 0x8899cc}
+      />
     </>
   );
 }
@@ -167,6 +230,19 @@ function EarthScene({ stationPoints, currentStation, onStationSelect, onHover }:
 export default function GlobeView({ stations, onStationSelect, currentStation }: GlobeViewProps) {
   const [hoveredStation, setHoveredStation] = useState<RadioStation | null>(null);
   const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(null);
+  const [isLight, setIsLight] = useState<boolean>(getIsLight);
+
+  // Observe theme class changes on document root
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setIsLight(getIsLight());
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+    return () => observer.disconnect();
+  }, []);
 
   const handleHover = useCallback(
     (station: RadioStation | null, pos: { x: number; y: number } | null) => {
@@ -181,7 +257,6 @@ export default function GlobeView({ stations, onStationSelect, currentStation }:
     if (!currentStation) return stations;
     const alreadyPresent = stations.some((s) => s.name === currentStation.name);
     if (alreadyPresent) return stations;
-    // Only add if we can map its country to coordinates
     const coords = getCountryCoordinates(currentStation.country);
     if (!coords) return stations;
     return [currentStation, ...stations];
@@ -204,12 +279,15 @@ export default function GlobeView({ stations, onStationSelect, currentStation }:
       .filter((p): p is StationPoint => p !== null);
   }, [mergedStations]);
 
+  const bgColor = isLight ? "#f0f4f8" : "#000000";
+  const labelColor = isLight ? "text-slate-500" : "text-white/50";
+
   return (
-    <div className="relative w-full h-full" style={{ background: "#000000" }}>
+    <div className="relative w-full h-full" style={{ background: bgColor }}>
       {/* Top label */}
       <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2 pointer-events-none">
-        <Globe className="w-4 h-4 text-white/50" />
-        <span className="text-xs text-white/50 tracking-widest uppercase">
+        <Globe className={`w-4 h-4 ${labelColor}`} />
+        <span className={`text-xs ${labelColor} tracking-widest uppercase`}>
           {stationPoints.length} stations mapped
         </span>
       </div>
@@ -218,14 +296,21 @@ export default function GlobeView({ stations, onStationSelect, currentStation }:
         camera={{ position: [0, 0, 2.8], fov: 45 }}
         style={{ width: "100%", height: "100%" }}
         gl={{ antialias: true, alpha: false }}
-        onCreated={({ gl }) => gl.setClearColor(0x000000, 1)}
+        onCreated={({ gl, scene }) => {
+          const color = isLight ? 0xf0f4f8 : 0x000000;
+          gl.setClearColor(color, 1);
+          scene.background = new THREE.Color(color);
+        }}
       >
-        <Stars radius={100} depth={50} count={3000} factor={4} saturation={0} fade />
+        {!isLight && (
+          <Stars radius={100} depth={50} count={3000} factor={4} saturation={0} fade />
+        )}
         <EarthScene
           stationPoints={stationPoints}
           currentStation={currentStation}
           onStationSelect={onStationSelect}
           onHover={handleHover}
+          isLight={isLight}
         />
         <OrbitControls
           enablePan={false}
@@ -259,8 +344,10 @@ export default function GlobeView({ stations, onStationSelect, currentStation }:
       {stationPoints.length === 0 && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
           <div className="text-center">
-            <Globe className="w-10 h-10 text-white/30 mx-auto mb-3" />
-            <p className="text-sm text-white/40">Search for stations to see them on the globe</p>
+            <Globe className={`w-10 h-10 ${isLight ? "text-slate-400" : "text-white/30"} mx-auto mb-3`} />
+            <p className={`text-sm ${isLight ? "text-slate-500" : "text-white/40"}`}>
+              Search for stations to see them on the globe
+            </p>
           </div>
         </div>
       )}
