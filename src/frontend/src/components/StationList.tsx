@@ -60,7 +60,7 @@ function SourceBanner({ source }: { source: StationSource }) {
 
   return (
     <div
-      className={`flex items-center gap-1.5 px-4 py-1.5 text-[10px] border-b border-border/50 ${
+      className={`flex items-center gap-1.5 px-4 py-1.5 text-[10px] ${
         isCached
           ? "bg-muted/40 text-muted-foreground"
           : "bg-muted/40 text-muted-foreground"
@@ -145,7 +145,7 @@ export function StationList({
       <SourceBanner source={stationSource} />
 
       <ScrollArea className="flex-1">
-        <div className="divide-y divide-neutral-border/50">
+        <div>
           {stations.map((s, idx) => {
             const station = isRadioStation(s) ? s : toRadioStation(s);
             const isActive =

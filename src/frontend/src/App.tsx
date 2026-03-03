@@ -39,6 +39,7 @@ export default function App() {
     name: "",
   });
   const [searchOpen, setSearchOpen] = useState(false);
+  const [searchSession, setSearchSession] = useState(0);
   const [amplitude, setAmplitude] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
@@ -288,7 +289,10 @@ export default function App() {
               onViewChange={(v) => setActiveView(v as ActiveView)}
               favoritesCount={favorites.length}
               searchOpen={searchOpen}
-              onSearchToggle={() => setSearchOpen((v) => !v)}
+              onSearchToggle={() => {
+                setSearchOpen((v) => !v);
+                setSearchSession((s) => s + 1);
+              }}
               hasActiveSearch={!!hasSearch}
             />
           </div>
@@ -322,14 +326,18 @@ export default function App() {
             onViewChange={(v) => setActiveView(v as ActiveView)}
             favoritesCount={favorites.length}
             searchOpen={searchOpen}
-            onSearchToggle={() => setSearchOpen((v) => !v)}
+            onSearchToggle={() => {
+              setSearchOpen((v) => !v);
+              setSearchSession((s) => s + 1);
+            }}
             hasActiveSearch={!!hasSearch}
           />
 
-          {/* Search panel */}
+          {/* Search panel — key resets internal state each time panel opens */}
           {searchOpen && (
             <div className="shrink-0 border-b border-border">
               <SearchPanel
+                key={searchSession}
                 onSearch={handleSearch}
                 isLoading={stationsLoading}
                 currentParams={searchParams}
@@ -338,7 +346,7 @@ export default function App() {
           )}
 
           {/* Now Playing */}
-          <div className="shrink-0 border-b border-border">
+          <div className="shrink-0 border-b border-transparent">
             <NowPlayingPanel
               station={player.currentStation}
               playbackState={player.playbackState}

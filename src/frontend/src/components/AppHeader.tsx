@@ -19,7 +19,7 @@ export function AppHeader({
   hasActiveSearch,
 }: AppHeaderProps) {
   return (
-    <header className="shrink-0 border-b border-border px-4 py-3">
+    <header className="shrink-0 border-b border-transparent px-4 py-3">
       <div className="flex items-center gap-3">
         {/* Logo + Title */}
         <div className="flex items-center gap-2.5 flex-1 min-w-0">
