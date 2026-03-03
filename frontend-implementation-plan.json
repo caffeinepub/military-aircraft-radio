@@ -1,48 +1,36 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Replace PWA icon with user-provided image and remove yellow pulsing dot from Globe tab",
+  "title": "Remove random fullscreen image and hide globe text in global mode",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Replace the generated PWA icon images with the user-provided image from the ICP storage URL and update all manifest and HTML references",
+      "summary": "Remove the random/unintended image that appears in fullscreen mode",
       "acceptanceCriteria": [
-        "The user-provided image URL is downloaded and saved as a static asset in frontend/public/",
-        "manifest.json icon entries (256px and 512px) reference the new image file",
-        "No previously generated PWA icon assets remain referenced in manifest.json or index.html",
-        "The app installs with the correct custom icon on supported devices"
+        "No unexpected or unintended image is visible when the app enters fullscreen mode",
+        "The fullscreen overlay renders only intentional elements (globe, visualizer, station info, slogans)"
       ],
       "file_operations": [
         {
-          "path": "frontend/public/antenna-icon.png",
-          "operation": "create",
-          "description": "Download the user-provided image from https://wkeve-6yaaa-aaaaf-qahcq-cai.raw.icp0.io/storage?contentId=kl67x-j6c5g-ptso3-xq4fe-kmcuc-trzl2-nzxqt-qjedv-j3y4m-3746e-tqe-image-29480 and save it as antenna-icon.png in frontend/public/. This will serve as the source PWA icon for all sizes."
-        },
-        {
-          "path": "frontend/public/manifest.json",
+          "path": "frontend/src/components/FullscreenOverlay.tsx",
           "operation": "modify",
-          "description": "Update the icons array in manifest.json to reference the new antenna-icon.png file for both 256x256 and 512x512 icon entries. Remove references to any previously generated PWA icon assets (fighter-jet-logo.dim_256x256.png and pwa-player-mascot.dim_512x512.png)."
-        },
-        {
-          "path": "frontend/index.html",
-          "operation": "modify",
-          "description": "Update any icon or image references in index.html (apple-touch-icon meta tags, favicon link tags, etc.) to point to the new antenna-icon.png file. Remove references to previously generated icon assets if present."
+          "description": "Remove or conditionally exclude any unintended image element (e.g., an img tag, background-image, or asset reference) that renders in fullscreen mode. Ensure only the FullscreenGlobe, AudioVisualizer, station info, and slogans are rendered."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Remove the yellow pulsing dot/marker from the Globe tab (GlobeView component)",
+      "summary": "Hide text content in GlobeView to prevent conflict with AppHeader in global mode",
       "acceptanceCriteria": [
-        "No yellow pulsing dot or animated marker is rendered on the globe in the Globe tab (GlobeView)",
-        "Station location points on the globe remain functional and clickable if applicable, only the yellow pulsing animation is removed",
-        "The globe renders without any pulsing dot animation at any station coordinate"
+        "When the Globe view is active, no text from GlobeView (e.g., labels, overlays, tooltips at rest) overlaps or conflicts with the AppHeader top bar",
+        "The GlobeView text/overlay elements are hidden or suppressed while in global mode",
+        "The 3D globe itself and interactive markers remain visible and functional"
       ],
       "file_operations": [
         {
           "path": "frontend/src/components/GlobeView.tsx",
           "operation": "modify",
-          "description": "Remove the yellow pulsing dot marker from the GlobeView 3D globe. Locate and delete or comment out the mesh/geometry/material code that renders the animated pulsing marker at station coordinates. Ensure station location points remain clickable and functional while removing only the pulsing animation visual."
+          "description": "Hide or suppress text elements (e.g., hover tooltips, labels, overlays) rendered by GlobeView that conflict with the AppHeader top bar. Ensure the 3D globe and interactive station markers remain fully visible and functional. Consider adding conditional rendering logic or CSS adjustments to hide text-only content when the Globe view is active."
         }
       ]
     }

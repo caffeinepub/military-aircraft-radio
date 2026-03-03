@@ -1,7 +1,7 @@
 import React from 'react';
-import { RadioStation } from '../services/radioBrowserApi';
+import { RadioStation, StationSource } from '../services/radioBrowserApi';
 import { Station } from '../backend';
-import { Star, Play, Loader, Radio } from 'lucide-react';
+import { Star, Play, Loader, Radio, WifiOff, RefreshCw, Database, AlertTriangle } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface StationListProps {
@@ -13,8 +13,12 @@ interface StationListProps {
   onAddFavorite: (station: RadioStation) => void;
   onRemoveFavorite: (stationName: string) => void;
   isLoading?: boolean;
+  isError?: boolean;
+  errorMessage?: string;
+  onRetry?: () => void;
   emptyMessage?: string;
   isFavoriteView?: boolean;
+  stationSource?: StationSource;
 }
 
 function isRadioStation(s: RadioStation | Station): s is RadioStation {
@@ -40,6 +44,31 @@ function toRadioStation(s: Station): RadioStation {
   };
 }
 
+function SourceBanner({ source }: { source: StationSource }) {
+  if (source === 'live') return null;
+
+  const isCached = source === 'cache';
+
+  return (
+    <div
+      className={`flex items-center gap-1.5 px-4 py-1.5 text-[10px] border-b border-border/50 ${
+        isCached
+          ? 'bg-muted/40 text-muted-foreground'
+          : 'bg-muted/40 text-muted-foreground'
+      }`}
+    >
+      {isCached ? (
+        <Database size={9} className="shrink-0 opacity-60" />
+      ) : (
+        <AlertTriangle size={9} className="shrink-0 opacity-60" />
+      )}
+      <span className="opacity-70">
+        {isCached ? 'Showing cached stations' : 'Using fallback stations — API unavailable'}
+      </span>
+    </div>
+  );
+}
+
 export function StationList({
   stations,
   currentStation,
@@ -49,14 +78,39 @@ export function StationList({
   onAddFavorite,
   onRemoveFavorite,
   isLoading,
+  isError,
+  errorMessage,
+  onRetry,
   emptyMessage = 'No stations found',
   isFavoriteView = false,
+  stationSource = 'live',
 }: StationListProps) {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center h-full gap-3">
         <Loader size={18} className="text-dim animate-spin" />
         <span className="text-xs text-dim">Loading stations...</span>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full gap-3 px-6 text-center">
+        <WifiOff size={20} className="text-dim opacity-50" />
+        <span className="text-sm text-foreground/70">Couldn't load stations</span>
+        <span className="text-xs text-dim">
+          {errorMessage ?? 'The radio directory may be temporarily unavailable.'}
+        </span>
+        {onRetry && (
+          <button
+            onClick={onRetry}
+            className="mt-1 flex items-center gap-1.5 text-xs px-4 py-1.5 rounded border border-border hover:bg-neutral-hover transition-colors"
+          >
+            <RefreshCw size={11} />
+            Retry
+          </button>
+        )}
       </div>
     );
   }
@@ -71,98 +125,103 @@ export function StationList({
   }
 
   return (
-    <ScrollArea className="h-full">
-      <div className="divide-y divide-neutral-border/50">
-        {stations.map((s, idx) => {
-          const station = isRadioStation(s) ? s : toRadioStation(s);
-          const isActive =
-            currentStation?.stationuuid === station.stationuuid ||
-            currentStation?.name === station.name;
-          const isCurrentlyPlaying = isActive && playbackState === 'playing';
-          const isCurrentlyLoading = isActive && playbackState === 'loading';
-          const isFav = favorites.some(f => f.name === station.name);
+    <div className="flex flex-col h-full">
+      {/* Subtle source banner — only shown for cache or hardcoded */}
+      <SourceBanner source={stationSource} />
 
-          return (
-            <div
-              key={station.stationuuid || idx}
-              className={`group flex items-center gap-3 px-4 py-2.5 cursor-pointer transition-colors ${
-                isActive
-                  ? 'station-row-active'
-                  : 'hover:bg-neutral-hover'
-              }`}
-              onClick={() => onPlay(station)}
-            >
-              {/* Play indicator */}
-              <div className="w-4 h-4 flex items-center justify-center shrink-0">
-                {isCurrentlyLoading ? (
-                  <Loader size={10} className="text-dim animate-spin" />
-                ) : isCurrentlyPlaying ? (
-                  <div className="flex items-end gap-px h-3">
-                    {[1, 2, 3].map(i => (
-                      <div
-                        key={i}
-                        className="w-0.5 bg-foreground"
-                        style={{
-                          height: '100%',
-                          animation: `signal-bar ${0.5 + i * 0.1}s ease-in-out infinite`,
-                          animationDelay: `${i * 0.1}s`,
-                          opacity: 0.7,
-                        }}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <Play size={10} className="text-dim opacity-0 group-hover:opacity-50 transition-opacity" />
-                )}
-              </div>
+      <ScrollArea className="flex-1">
+        <div className="divide-y divide-neutral-border/50">
+          {stations.map((s, idx) => {
+            const station = isRadioStation(s) ? s : toRadioStation(s);
+            const isActive =
+              currentStation?.stationuuid === station.stationuuid ||
+              currentStation?.name === station.name;
+            const isCurrentlyPlaying = isActive && playbackState === 'playing';
+            const isCurrentlyLoading = isActive && playbackState === 'loading';
+            const isFav = favorites.some(f => f.name === station.name);
 
-              {/* Favicon */}
-              {station.favicon ? (
-                <img
-                  src={station.favicon}
-                  alt=""
-                  className="w-4 h-4 object-contain shrink-0 opacity-50"
-                  onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                />
-              ) : (
-                <Radio size={11} className="text-dim shrink-0 opacity-25" />
-              )}
-
-              {/* Station info */}
-              <div className="flex-1 min-w-0">
-                <div className={`text-xs truncate font-medium ${isActive ? 'text-foreground' : 'text-foreground/80'}`}>
-                  {station.name}
-                </div>
-                <div className="flex items-center gap-1.5 text-[10px] text-dim mt-0.5">
-                  {station.country && <span>{station.country}</span>}
-                  {station.codec && <span className="opacity-60">{station.codec}</span>}
-                  {station.bitrate > 0 && <span className="opacity-60">{station.bitrate}k</span>}
-                </div>
-              </div>
-
-              {/* Favorite toggle */}
-              <button
-                onClick={e => {
-                  e.stopPropagation();
-                  if (isFav || isFavoriteView) {
-                    onRemoveFavorite(station.name);
-                  } else {
-                    onAddFavorite(station);
-                  }
-                }}
-                className={`p-1 transition-all shrink-0 rounded ${
-                  isFav
-                    ? 'text-foreground opacity-80'
-                    : 'text-dim opacity-0 group-hover:opacity-40 hover:opacity-80'
+            return (
+              <div
+                key={station.stationuuid || idx}
+                className={`group flex items-center gap-3 px-4 py-2.5 cursor-pointer transition-colors ${
+                  isActive
+                    ? 'station-row-active'
+                    : 'hover:bg-neutral-hover'
                 }`}
-                aria-label={isFav ? 'Remove from saved' : 'Save station'}
+                onClick={() => onPlay(station)}
               >
-                <Star size={11} fill={isFav ? 'currentColor' : 'none'} />
-              </button>
-            </div>
-          );
-        })}
-      </div>
-    </ScrollArea>
+                {/* Play indicator */}
+                <div className="w-4 h-4 flex items-center justify-center shrink-0">
+                  {isCurrentlyLoading ? (
+                    <Loader size={10} className="text-dim animate-spin" />
+                  ) : isCurrentlyPlaying ? (
+                    <div className="flex items-end gap-px h-3">
+                      {[1, 2, 3].map(i => (
+                        <div
+                          key={i}
+                          className="w-0.5 bg-foreground"
+                          style={{
+                            height: '100%',
+                            animation: `signal-bar ${0.5 + i * 0.1}s ease-in-out infinite`,
+                            animationDelay: `${i * 0.1}s`,
+                            opacity: 0.7,
+                          }}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <Play size={10} className="text-dim opacity-0 group-hover:opacity-50 transition-opacity" />
+                  )}
+                </div>
+
+                {/* Favicon */}
+                {station.favicon ? (
+                  <img
+                    src={station.favicon}
+                    alt=""
+                    className="w-4 h-4 object-contain shrink-0 opacity-50"
+                    onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                  />
+                ) : (
+                  <Radio size={11} className="text-dim shrink-0 opacity-25" />
+                )}
+
+                {/* Station info */}
+                <div className="flex-1 min-w-0">
+                  <div className={`text-xs truncate font-medium ${isActive ? 'text-foreground' : 'text-foreground/80'}`}>
+                    {station.name}
+                  </div>
+                  <div className="flex items-center gap-1.5 text-[10px] text-dim mt-0.5">
+                    {station.country && <span>{station.country}</span>}
+                    {station.codec && <span className="opacity-60">{station.codec}</span>}
+                    {station.bitrate > 0 && <span className="opacity-60">{station.bitrate}k</span>}
+                  </div>
+                </div>
+
+                {/* Favorite toggle */}
+                <button
+                  onClick={e => {
+                    e.stopPropagation();
+                    if (isFav || isFavoriteView) {
+                      onRemoveFavorite(station.name);
+                    } else {
+                      onAddFavorite(station);
+                    }
+                  }}
+                  className={`p-1 transition-all shrink-0 rounded ${
+                    isFav
+                      ? 'text-foreground opacity-80'
+                      : 'text-dim opacity-0 group-hover:opacity-40 hover:opacity-80'
+                  }`}
+                  aria-label={isFav ? 'Remove from saved' : 'Save station'}
+                >
+                  <Star size={11} fill={isFav ? 'currentColor' : 'none'} />
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      </ScrollArea>
+    </div>
   );
 }

@@ -1,12 +1,10 @@
 # Specification
 
 ## Summary
-**Goal:** Replace the PWA icon with a user-provided image and remove the yellow pulsing dot from the Globe tab.
+**Goal:** Remove an unintended image appearing in fullscreen mode and hide conflicting text in the globe/global view.
 
 **Planned changes:**
-- Download the user-provided image and save it as the PWA icon asset in `frontend/public/`
-- Update `manifest.json` icon entries (256px and 512px) to reference the new image
-- Remove previously generated PWA icon assets from `manifest.json` and `frontend/index.html`
-- Remove the yellow pulsing dot/animated marker from the `GlobeView.tsx` component
+- Remove the random/unintended image rendered inside the fullscreen overlay component so it no longer appears when the app enters fullscreen mode
+- Hide the text content inside the GlobeView component when globe mode is active to prevent it from overlapping with the AppHeader top bar
 
-**User-visible outcome:** The app installs with the user's custom PWA icon, and the Globe tab no longer shows a yellow pulsing dot on the 3D globe.
+**User-visible outcome:** Fullscreen mode displays only intentional elements, and the globe view no longer shows conflicting text that overlaps with the top bar.

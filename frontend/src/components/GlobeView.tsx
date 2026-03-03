@@ -2,7 +2,6 @@ import { useRef, useEffect, useMemo, useCallback, useState } from "react";
 import * as THREE from "three";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, Stars } from "@react-three/drei";
-import { Globe } from "lucide-react";
 import { RadioStation } from "../services/radioBrowserApi";
 import { getCountryCoordinates } from "@/utils/geoMapping";
 
@@ -269,35 +268,16 @@ export default function GlobeView({ stations, onStationSelect, currentStation }:
           position: latLngToVec3(jitterLat, jitterLng, 1.01),
         };
       })
-      .filter((p): p is StationPoint => p !== null);
+      .filter((sp): sp is StationPoint => sp !== null);
   }, [mergedStations]);
 
-  const bgColor = isLight ? "#f0f4f8" : "#000000";
-  const labelColor = isLight ? "text-slate-500" : "text-white/50";
-
   return (
-    <div className="relative w-full h-full" style={{ background: bgColor }}>
-      {/* Top label */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2 pointer-events-none">
-        <Globe className={`w-4 h-4 ${labelColor}`} />
-        <span className={`text-xs ${labelColor} tracking-widest uppercase`}>
-          {stationPoints.length} stations mapped
-        </span>
-      </div>
-
+    <div className="absolute inset-0">
       <Canvas
         camera={{ position: [0, 0, 2.8], fov: 45 }}
         style={{ width: "100%", height: "100%" }}
-        gl={{ antialias: true, alpha: false }}
-        onCreated={({ gl, scene }) => {
-          const color = isLight ? 0xf0f4f8 : 0x000000;
-          gl.setClearColor(color, 1);
-          scene.background = new THREE.Color(color);
-        }}
       >
-        {!isLight && (
-          <Stars radius={100} depth={50} count={3000} factor={4} saturation={0} fade />
-        )}
+        <Stars radius={100} depth={50} count={3000} factor={3} fade speed={0.5} />
         <EarthScene
           stationPoints={stationPoints}
           currentStation={currentStation}
@@ -306,41 +286,36 @@ export default function GlobeView({ stations, onStationSelect, currentStation }:
           isLight={isLight}
         />
         <OrbitControls
+          enableZoom={true}
           enablePan={false}
           minDistance={1.5}
           maxDistance={5}
-          rotateSpeed={0.4}
-          zoomSpeed={0.6}
+          autoRotate={false}
         />
       </Canvas>
 
-      {/* Tooltip */}
+      {/* Hover tooltip — only shown on hover, positioned at cursor */}
       {hoveredStation && tooltipPos && (
         <div
-          className="fixed z-50 pointer-events-none"
-          style={{ left: tooltipPos.x + 14, top: tooltipPos.y - 10 }}
+          className="fixed z-30 pointer-events-none"
+          style={{
+            left: tooltipPos.x + 12,
+            top: tooltipPos.y - 36,
+          }}
         >
-          <div className="bg-background/90 border border-border rounded-md px-3 py-2 shadow-xl backdrop-blur-sm">
-            <p className="text-sm font-medium text-foreground leading-tight">{hoveredStation.name}</p>
-            <p className="text-xs text-muted-foreground mt-0.5">{hoveredStation.country}</p>
-            {hoveredStation.tags && (
-              <p className="text-xs text-muted-foreground/60 mt-0.5 truncate max-w-[180px]">
-                {hoveredStation.tags.split(",").slice(0, 2).join(", ")}
-              </p>
+          <div
+            className="px-2 py-1 rounded text-xs font-medium shadow-lg"
+            style={{
+              backgroundColor: isLight ? 'rgba(255,255,255,0.92)' : 'rgba(0,0,0,0.82)',
+              color: isLight ? '#1a1a1a' : '#ffffff',
+              border: isLight ? '1px solid rgba(0,0,0,0.12)' : '1px solid rgba(255,255,255,0.15)',
+              backdropFilter: 'blur(4px)',
+            }}
+          >
+            {hoveredStation.name}
+            {hoveredStation.country && (
+              <span style={{ opacity: 0.6 }}> · {hoveredStation.country}</span>
             )}
-            <p className="text-xs text-muted-foreground/50 mt-1">Click to play</p>
-          </div>
-        </div>
-      )}
-
-      {/* Empty state */}
-      {stationPoints.length === 0 && (
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-          <div className="text-center">
-            <Globe className={`w-10 h-10 ${isLight ? "text-slate-400" : "text-white/30"} mx-auto mb-3`} />
-            <p className={`text-sm ${isLight ? "text-slate-500" : "text-white/40"}`}>
-              Search for stations to see them on the globe
-            </p>
           </div>
         </div>
       )}

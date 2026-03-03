@@ -1,24 +1,24 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Project with a globe tab feature and PWA support. User provided a custom PWA image to replace the generated one, and requested removal of the yellow pulsing dot from the globe tab.",
+  "summary": "New project",
   "architectural_notes": [
-    "PWA image is user-provided (external URL), not AI-generated"
+    "In global/globe mode, text inside the globe component should be hidden to avoid conflict with the top bar"
   ],
   "known_issues": [],
   "isFixRequest": true,
   "existing_features": [
     {
-      "id": "feature-replace-the-generated-pwa-icon-images-with-the-user-provided-image-from-https-wkeve-6yaaa-aaaaf-qahcq-cai-raw-icp0-io-storage-contentid-kl67x-j6c5g-ptso3-xq4fe-kmcuc-trzl2-nzxqt-qjedv-j3y4m-3746e-tqe-image-29480-download-this-image-and-use-it-as-the-pwa-icon-for-both-the-256px-and-512px-entries-in-frontend-public-manifest-json-remove-any-previously-generated-pwa-icon-assets-and-update-all-references-in-manifest-json-and-frontend-index-html-accordingly",
-      "title": "Replace the generated PWA icon images with the user-provided image from https://wkeve-6yaaa-aaaaf-qahcq-cai.raw.icp0.io/storage?contentId=kl67x-j6c5g-ptso3-xq4fe-kmcuc-trzl2-nzxqt-qjedv-j3y4m-3746e-tqe-image-29480. Download this image and use it as the PWA icon for both the 256px and 512px entries in frontend/public/manifest.json. Remove any previously generated PWA icon assets and update all references in manifest.json and frontend/index.html accordingly.",
+      "id": "feature-remove-the-random-unintended-image-that-appears-in-full-screen-mode-inside-fullscreenoverlay-or-related-fullscreen-components-it-should-not-be-rendered-at-all",
+      "title": "Remove the random/unintended image that appears in full screen mode (inside FullscreenOverlay or related fullscreen components). It should not be rendered at all.",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-remove-the-yellow-pulsing-dot-marker-from-the-globe-tab-globeview-component-the-pulsing-dot-that-appears-on-the-3d-globe-to-indicate-a-station-s-geographic-location-must-be-hidden-or-removed-entirely-from-globeview-tsx",
-      "title": "Remove the yellow pulsing dot/marker from the Globe tab (GlobeView component). The pulsing dot that appears on the 3D globe to indicate a station's geographic location must be hidden or removed entirely from GlobeView.tsx.",
+      "id": "feature-in-global-globe-mode-hide-the-text-content-rendered-inside-the-globeview-component-to-prevent-it-from-conflicting-with-the-top-bar-appheader",
+      "title": "In global/globe mode, hide the text content rendered inside the GlobeView component to prevent it from conflicting with the top bar (AppHeader).",
       "reqIds": [
         "REQ-2"
       ],
@@ -26,8 +26,7 @@
     }
   ],
   "new_feature_requests": [],
-  "gameProjectType": "none",
-  "projectName": "Antenna",
+  "projectName": "Remove random fullscreen image and hide globe text in global mode",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

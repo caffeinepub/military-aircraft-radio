@@ -1,7 +1,7 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-03-02T22:30:10.834Z",
+  "generatedAt": "2026-03-03T00:44:37.333Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
@@ -12,21 +12,18 @@
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Replace the generated PWA icon images with the user-provided image from https://wkeve-6yaaa-aaaaf-qahcq-cai.raw.icp0.io/storage?contentId=kl67x-j6c5g-ptso3-xq4fe-kmcuc-trzl2-nzxqt-qjedv-j3y4m-3746e-tqe-image-29480. Download this image and use it as the PWA icon for both the 256px and 512px entries in frontend/public/manifest.json. Remove any previously generated PWA icon assets and update all references in manifest.json and frontend/index.html accordingly.",
+        "summary": "Remove the random/unintended image that appears in full screen mode (inside FullscreenOverlay or related fullscreen components). It should not be rendered at all.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/public/antenna-icon.png",
-          "frontend/public/manifest.json",
-          "frontend/index.html"
+          "frontend/src/components/FullscreenOverlay.tsx"
         ],
         "matchedFiles": [
-          "frontend/public/manifest.json",
-          "frontend/index.html"
+          "frontend/src/components/FullscreenOverlay.tsx"
         ]
       },
       {
         "id": "REQ-2",
-        "summary": "Remove the yellow pulsing dot/marker from the Globe tab (GlobeView component). The pulsing dot that appears on the 3D globe to indicate a station's geographic location must be hidden or removed entirely from GlobeView.tsx.",
+        "summary": "In global/globe mode, hide the text content rendered inside the GlobeView component to prevent it from conflicting with the top bar (AppHeader).",
         "status": "implemented",
         "plannedFiles": [
           "frontend/src/components/GlobeView.tsx"
@@ -42,8 +39,7 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/index.html",
-    "frontend/public/manifest.json",
+    "frontend/src/components/FullscreenOverlay.tsx",
     "frontend/src/components/GlobeView.tsx",
     "project_state.json",
     "scratch/component-selection.json",

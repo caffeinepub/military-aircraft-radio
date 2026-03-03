@@ -1,56 +1,55 @@
 {
   "kind": "build_request",
-  "title": "Replace PWA icon with user-provided image and remove yellow pulsing dot from Globe tab",
-  "projectName": "Antenna",
+  "title": "Remove random fullscreen image and hide globe text in global mode",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Replace the generated PWA icon images with the user-provided image from https://wkeve-6yaaa-aaaaf-qahcq-cai.raw.icp0.io/storage?contentId=kl67x-j6c5g-ptso3-xq4fe-kmcuc-trzl2-nzxqt-qjedv-j3y4m-3746e-tqe-image-29480. Download this image and use it as the PWA icon for both the 256px and 512px entries in frontend/public/manifest.json. Remove any previously generated PWA icon assets and update all references in manifest.json and frontend/index.html accordingly.",
+      "text": "Remove the random/unintended image that appears in full screen mode (inside FullscreenOverlay or related fullscreen components). It should not be rendered at all.",
       "target": "frontend",
       "source": {
         "messageIds": [
+          "msg-3",
           "msg-4"
         ],
         "quotes": [
-          "use this image for the PWA image, remove the one you generated: https://wkeve-6yaaa-aaaaf-qahcq-cai.raw.icp0.io/storage?contentId=kl67x-j6c5g-ptso3-xq4fe-kmcuc-trzl2-nzxqt-qjedv-j3y4m-3746e-tqe-image-29480"
+          "It's not supposed to be there remove it"
         ]
       },
       "acceptanceCriteria": [
-        "The user-provided image URL is downloaded and saved as a static asset in frontend/public/",
-        "manifest.json icon entries (256px and 512px) reference the new image file",
-        "No previously generated PWA icon assets remain referenced in manifest.json or index.html",
-        "The app installs with the correct custom icon on supported devices"
+        "No unexpected or unintended image is visible when the app enters fullscreen mode",
+        "The fullscreen overlay renders only intentional elements (globe, visualizer, station info, slogans)"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Remove the yellow pulsing dot/marker from the Globe tab (GlobeView component). The pulsing dot that appears on the 3D globe to indicate a station's geographic location must be hidden or removed entirely from GlobeView.tsx.",
+      "text": "In global/globe mode, hide the text content rendered inside the GlobeView component to prevent it from conflicting with the top bar (AppHeader).",
       "target": "frontend",
       "source": {
         "messageIds": [
+          "msg-3",
           "msg-4"
         ],
         "quotes": [
-          "the globe tab needs the yellow pusling dot removed"
+          "the text in globe mode should be hidden",
+          "The top bar in global mode has a conflict with the text in the globe component"
         ]
       },
       "acceptanceCriteria": [
-        "No yellow pulsing dot or animated marker is rendered on the globe in the Globe tab (GlobeView)",
-        "Station location points on the globe remain functional and clickable if applicable, only the yellow pulsing animation is removed",
-        "The globe renders without any pulsing dot animation at any station coordinate"
+        "When the Globe view is active, no text from GlobeView (e.g., labels, overlays, tooltips at rest) overlaps or conflicts with the AppHeader top bar",
+        "The GlobeView text/overlay elements are hidden or suppressed while in global mode",
+        "The 3D globe itself and interactive markers remain visible and functional"
       ]
     }
   ],
   "constraints": [
-    "Do not modify any files under frontend/src/hooks/ immutable paths",
-    "Use the exact user-provided image URL as the source for the PWA icon replacement",
-    "Do not alter the FullscreenGlobe component — only target GlobeView.tsx for the pulsing dot removal"
+    "Do not modify files listed in frontend.immutablePaths",
+    "Do not alter the globe's 3D rendering or interactive marker functionality"
   ],
   "nonGoals": [
-    "Redesigning the globe view or changing other visual elements",
-    "Modifying backend logic",
-    "Changing any other PWA manifest properties beyond the icon assets"
+    "Redesigning the fullscreen overlay layout",
+    "Changing AppHeader behavior or positioning",
+    "Adding new globe features or text elements"
   ],
   "imageRequirements": {
     "required": [],

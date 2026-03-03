@@ -55,7 +55,7 @@ export function BottomToolbar({
   };
 
   return (
-    <div className="shrink-0 border-t border-neutral-border px-4 py-2.5 flex items-center justify-between gap-3">
+    <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-neutral-border bg-background px-4 py-2.5 flex items-center justify-between gap-3">
       {/* Left: Volume */}
       <div className="flex items-center gap-2 flex-1">
         <button

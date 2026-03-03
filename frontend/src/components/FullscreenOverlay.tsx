@@ -151,24 +151,6 @@ export function FullscreenOverlay({
         <X size={18} />
       </button>
 
-      {/* Mascot image — top-left corner */}
-      <div
-        className="absolute top-4 left-4 z-20 pointer-events-none"
-        style={{
-          opacity: visible ? 0.85 : 0,
-          transition: 'opacity 0.5s ease-out 0.2s',
-        }}
-      >
-        <img
-          src="/assets/generated/pwa-player-mascot.dim_512x512.png"
-          alt="Antenna mascot"
-          className="w-20 h-20 object-cover rounded-xl"
-          style={{
-            filter: 'drop-shadow(0 4px 16px rgba(0,0,0,0.6))',
-          }}
-        />
-      </div>
-
       {/* Main content */}
       <div
         className="relative z-20 flex flex-col items-center justify-center gap-8 px-8 w-full max-w-sm"
@@ -206,7 +188,7 @@ export function FullscreenOverlay({
                   {statusLabel}
                 </span>
                 {isPlaying && (
-                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-white" />
                 )}
                 {station.country && (
                   <span className="text-xs text-white/40">{station.country}</span>

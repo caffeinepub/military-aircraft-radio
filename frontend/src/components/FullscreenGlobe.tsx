@@ -33,12 +33,10 @@ function GlobeScene({ stationLat, stationLng, isLight }: GlobeSceneProps) {
   const globeRef = useRef<THREE.Mesh>(null);
   const atmosphereRef = useRef<THREE.Mesh>(null);
   const markerRef = useRef<THREE.Mesh>(null);
-  const ringRef = useRef<THREE.Mesh>(null);
   const ambientRef = useRef<THREE.AmbientLight>(null);
   const dirLight1Ref = useRef<THREE.DirectionalLight>(null);
   const dirLight2Ref = useRef<THREE.DirectionalLight>(null);
   const { camera, gl, scene } = useThree();
-  const clockRef = useRef(new THREE.Clock());
 
   const earthTexture = useMemo(() => {
     const loader = new THREE.TextureLoader();
@@ -102,22 +100,11 @@ function GlobeScene({ stationLat, stationLng, isLight }: GlobeSceneProps) {
   }, [isLight]);
 
   useFrame(() => {
-    const t = clockRef.current.getElapsedTime();
     if (globeRef.current) globeRef.current.rotation.y += 0.0003;
     if (atmosphereRef.current) atmosphereRef.current.rotation.y += 0.0003;
-
-    if (markerRef.current) {
-      const scale = 1 + 0.6 * Math.sin(t * 3);
-      markerRef.current.scale.setScalar(scale);
-      (markerRef.current.material as THREE.MeshBasicMaterial).opacity =
-        0.7 + 0.3 * Math.sin(t * 3);
-    }
-    if (ringRef.current) {
-      const progress = (Math.sin(t * 2) + 1) / 2;
-      ringRef.current.scale.setScalar(1 + 1.5 * progress);
-      (ringRef.current.material as THREE.MeshBasicMaterial).opacity = 0.6 * (1 - progress);
-    }
   });
+
+  const markerColor = isLight ? 0x1a3a6e : 0xffffff;
 
   return (
     <>
@@ -142,16 +129,10 @@ function GlobeScene({ stationLat, stationLng, isLight }: GlobeSceneProps) {
         />
       </mesh>
 
-      {/* Pulsing dot */}
+      {/* Static station marker — no pulsing animation */}
       <mesh ref={markerRef} position={markerPosition}>
-        <sphereGeometry args={[0.04, 12, 12]} />
-        <meshBasicMaterial color={0xffee55} transparent opacity={1} />
-      </mesh>
-
-      {/* Expanding ring */}
-      <mesh ref={ringRef} position={markerPosition}>
-        <ringGeometry args={[0.04, 0.065, 32]} />
-        <meshBasicMaterial color={0xffee55} transparent opacity={0.6} side={THREE.DoubleSide} />
+        <sphereGeometry args={[0.035, 12, 12]} />
+        <meshBasicMaterial color={markerColor} transparent opacity={0.9} />
       </mesh>
 
       <ambientLight ref={ambientRef} intensity={isLight ? 2.5 : 1.2} />
