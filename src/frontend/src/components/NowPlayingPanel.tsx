@@ -1,5 +1,6 @@
-import { RefreshCw, WifiOff } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { RefreshCw, Star, WifiOff } from "lucide-react";
+import type React from "react";
+import { useEffect, useRef, useState } from "react";
 import type { PlaybackState, StreamHealth } from "../hooks/useRadioPlayer";
 import type { RadioStation } from "../services/radioBrowserApi";
 import { AudioVisualizer } from "./AudioVisualizer";
@@ -45,6 +46,9 @@ interface NowPlayingPanelProps {
   playbackState: PlaybackState;
   streamHealth: StreamHealth;
   analyserNode: AnalyserNode | null;
+  isFavorite?: boolean;
+  onAddFavorite?: (station: RadioStation) => void;
+  onRemoveFavorite?: (stationName: string) => void;
 }
 
 export function NowPlayingPanel({
@@ -52,6 +56,9 @@ export function NowPlayingPanel({
   playbackState,
   streamHealth,
   analyserNode,
+  isFavorite = false,
+  onAddFavorite,
+  onRemoveFavorite,
 }: NowPlayingPanelProps) {
   const isPlaying = playbackState === "playing";
   const isLoading = playbackState === "loading";
@@ -60,6 +67,11 @@ export function NowPlayingPanel({
     Math.floor(Math.random() * SLOGANS.length),
   );
   const [sloganVisible, setSloganVisible] = useState(true);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLSpanElement>(null);
+  const sideTextRef = useRef<HTMLSpanElement>(null);
+  const [needsScroll, setNeedsScroll] = useState(false);
+  const [marqueeOffset, setMarqueeOffset] = useState("-50%");
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -68,9 +80,33 @@ export function NowPlayingPanel({
         setSloganIndex((i) => (i + 1) % SLOGANS.length);
         setSloganVisible(true);
       }, 400);
-    }, 5000);
+    }, 9000);
     return () => clearInterval(interval);
   }, []);
+
+  // Check if slogan overflows its container — sloganIndex is an intentional trigger dep
+  // biome-ignore lint/correctness/useExhaustiveDependencies: sloganIndex is used as a trigger to re-run the check after each slogan rotation
+  useEffect(() => {
+    const checkOverflow = () => {
+      const textEl = textRef.current || sideTextRef.current;
+      const containerEl = containerRef.current;
+      if (textEl && containerEl) {
+        const overflow = textEl.scrollWidth > containerEl.clientWidth;
+        setNeedsScroll(overflow);
+        if (overflow) {
+          const offset =
+            -(
+              (textEl.scrollWidth - containerEl.clientWidth) /
+              textEl.scrollWidth
+            ) * 100;
+          setMarqueeOffset(`${offset.toFixed(1)}%`);
+        }
+      }
+    };
+    // Small delay to let DOM settle after slogan change
+    const timer = setTimeout(checkOverflow, 50);
+    return () => clearTimeout(timer);
+  }, [sloganIndex]);
 
   const statusLabel =
     streamHealth === "reconnecting"
@@ -120,13 +156,17 @@ export function NowPlayingPanel({
             </div>
           </>
         ) : (
-          <div>
+          <div ref={containerRef} className="slogan-scroll-container w-full">
             <span
-              className="text-[11px] text-dim italic block truncate"
-              style={{
-                opacity: sloganVisible ? 1 : 0,
-                transition: "opacity 0.4s ease",
-              }}
+              ref={textRef}
+              className={`text-[11px] text-dim italic slogan-scroll-text${needsScroll ? " needs-scroll" : ""}`}
+              style={
+                {
+                  opacity: sloganVisible ? 1 : 0,
+                  transition: "opacity 0.4s ease",
+                  "--marquee-offset": marqueeOffset,
+                } as React.CSSProperties
+              }
             >
               {SLOGANS[sloganIndex]}
             </span>
@@ -134,19 +174,47 @@ export function NowPlayingPanel({
         )}
       </div>
 
-      {/* Slogan when station is playing — shown below visualizer area */}
+      {/* Slogan when station is playing — shown beside visualizer */}
       {station && (
-        <div className="hidden sm:block shrink-0 max-w-[160px]">
+        <div className="hidden sm:block shrink min-w-0 flex-1 slogan-scroll-container">
           <span
-            className="text-[10px] text-dim italic truncate block text-right"
-            style={{
-              opacity: sloganVisible ? 1 : 0,
-              transition: "opacity 0.4s ease",
-            }}
+            ref={sideTextRef}
+            className={`text-[10px] text-dim italic slogan-scroll-text${needsScroll ? " needs-scroll" : ""}`}
+            style={
+              {
+                opacity: sloganVisible ? 1 : 0,
+                transition: "opacity 0.4s ease",
+                "--marquee-offset": marqueeOffset,
+              } as React.CSSProperties
+            }
           >
             {SLOGANS[sloganIndex]}
           </span>
         </div>
+      )}
+
+      {/* Favorite toggle — only shown when a station is loaded */}
+      {station && (
+        <button
+          type="button"
+          data-ocid="now-playing.toggle"
+          aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+          onClick={() => {
+            if (isFavorite) {
+              onRemoveFavorite?.(station.name);
+            } else {
+              onAddFavorite?.(station);
+            }
+          }}
+          className="shrink-0 p-1.5 rounded transition-colors hover:bg-neutral-hover"
+        >
+          <Star
+            size={16}
+            className={
+              isFavorite ? "fill-foreground text-foreground" : "text-dim"
+            }
+          />
+        </button>
       )}
 
       {/* Visualizer */}

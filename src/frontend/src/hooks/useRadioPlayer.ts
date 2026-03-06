@@ -238,6 +238,30 @@ export function useRadioPlayer(): RadioPlayerState {
         });
       }
 
+      // Update OS / browser audio widget via Media Session API
+      if ("mediaSession" in navigator) {
+        const PWA_IMAGE =
+          "https://wkeve-6yaaa-aaaaf-qahcq-cai.raw.icp0.io/storage?contentId=kl67x-j6c5g-ptso3-xq4fe-kmcuc-trzl2-nzxqt-qjedv-j3y4m-3746e-tqe-image-29480";
+        const artwork: MediaImage[] = [
+          { src: PWA_IMAGE, sizes: "512x512", type: "image/png" },
+        ];
+        // Prefer the station's own favicon if it exists
+        if (station.favicon) {
+          artwork.unshift({
+            src: station.favicon,
+            sizes: "96x96",
+            type: "image/png",
+          });
+        }
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: station.name,
+          artist: station.country || "Internet Radio",
+          album: "Antenna",
+          artwork,
+        });
+        navigator.mediaSession.playbackState = "playing";
+      }
+
       clickStation(station.stationuuid);
     },
     [clearStallTimer, clearRetryTimer, initAudioContext],
@@ -248,6 +272,9 @@ export function useRadioPlayer(): RadioPlayerState {
     clearRetryTimer();
     audioRef.current?.pause();
     setPlaybackState("paused");
+    if ("mediaSession" in navigator) {
+      navigator.mediaSession.playbackState = "paused";
+    }
   }, [clearStallTimer, clearRetryTimer]);
 
   const resume = useCallback(() => {
@@ -284,6 +311,10 @@ export function useRadioPlayer(): RadioPlayerState {
       localStorage.removeItem(STORAGE_KEY);
     } catch {
       // ignore
+    }
+    if ("mediaSession" in navigator) {
+      navigator.mediaSession.playbackState = "none";
+      navigator.mediaSession.metadata = null;
     }
   }, [clearStallTimer, clearRetryTimer]);
 

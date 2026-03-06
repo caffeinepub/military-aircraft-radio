@@ -5,5 +5,21 @@ interface HUDLayoutProps {
 }
 
 export function HUDLayout({ children }: HUDLayoutProps) {
-  return <div className="min-h-screen bg-background">{children}</div>;
+  return (
+    <div
+      className="bg-background"
+      style={{
+        // Use dvh so mobile browser chrome (address bar) is excluded
+        position: "fixed",
+        inset: 0,
+        width: "100dvw",
+        height: "100dvh",
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      {children}
+    </div>
+  );
 }

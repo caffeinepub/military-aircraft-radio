@@ -11,18 +11,26 @@ export function SplashLoader({ onDone }: SplashLoaderProps) {
   const [fading, setFading] = useState(false);
 
   useEffect(() => {
-    // Show splash for 1.8 s then fade out over 0.5 s
+    // Lock body scroll so no white flashes behind the splash
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+
     const showTimer = setTimeout(() => {
       setFading(true);
     }, 1800);
 
     const doneTimer = setTimeout(() => {
+      document.body.style.overflow = prev;
+      document.documentElement.style.overflow = "";
       onDone();
-    }, 2300); // 1800 + 500 fade
+    }, 2300);
 
     return () => {
       clearTimeout(showTimer);
       clearTimeout(doneTimer);
+      document.body.style.overflow = prev;
+      document.documentElement.style.overflow = "";
     };
   }, [onDone]);
 
@@ -31,31 +39,42 @@ export function SplashLoader({ onDone }: SplashLoaderProps) {
       data-ocid="splash.panel"
       style={{
         position: "fixed",
-        inset: 0,
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        // Extend beyond safe areas / notches using env() so no gap on any device
         width: "100vw",
         height: "100vh",
-        // Use dvh as well for mobile browsers with dynamic toolbars
-        minHeight: "100dvh",
+        margin: 0,
+        padding: 0,
         backgroundColor: "#0a0a0a",
-        zIndex: 9999,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
+        zIndex: 99999,
         overflow: "hidden",
         transition: "opacity 0.5s ease",
         opacity: fading ? 0 : 1,
         pointerEvents: fading ? "none" : "all",
       }}
     >
-      {/* Full-bleed image — covers the entire screen */}
+      {/* Full-bleed background colour so nothing shows before image loads */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          backgroundColor: "#0a0a0a",
+        }}
+      />
+
+      {/* Full-bleed image — covers the entire screen with no letterboxing */}
       <img
         src={PWA_IMAGE}
         alt="Antenna"
         style={{
           position: "absolute",
-          inset: 0,
-          width: "100%",
-          height: "100%",
+          top: "-5%",
+          left: "-5%",
+          width: "110%",
+          height: "110%",
           objectFit: "cover",
           objectPosition: "center",
           display: "block",
@@ -63,13 +82,13 @@ export function SplashLoader({ onDone }: SplashLoaderProps) {
         draggable={false}
       />
 
-      {/* Subtle vignette overlay so the image doesn't feel too raw */}
+      {/* Subtle vignette */}
       <div
         style={{
           position: "absolute",
           inset: 0,
           background:
-            "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55) 100%)",
+            "radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.6) 100%)",
           pointerEvents: "none",
         }}
       />

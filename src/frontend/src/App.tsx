@@ -28,9 +28,6 @@ import {
 
 type ActiveView = "stations" | "favorites" | "globe";
 
-// Height of the fixed bottom toolbar — used to add padding so content isn't hidden behind it
-const TOOLBAR_HEIGHT = 52;
-
 export default function App() {
   const [activeView, setActiveView] = useState<ActiveView>("stations");
   const [searchParams, setSearchParams] = useState({
@@ -255,9 +252,13 @@ export default function App() {
   return (
     <HUDLayout>
       {activeView === "globe" ? (
-        /* Globe view: full-viewport layout with header and toolbar overlaid */
-        <div className="relative w-full" style={{ height: "100dvh" }}>
-          {/* Globe fills the entire viewport */}
+        /*
+         * Globe view:
+         * HUDLayout is a fixed flex column (100dvh).
+         * This container fills it (flex-1) and layers header + globe + toolbar.
+         */
+        <div className="relative flex-1 min-h-0 w-full overflow-hidden">
+          {/* Globe fills the entire container */}
           {isGlobeError ? (
             <div className="flex flex-col items-center justify-center w-full h-full gap-3 px-6 text-center bg-background">
               <p className="text-sm text-foreground/70">
@@ -315,11 +316,15 @@ export default function App() {
           </div>
         </div>
       ) : (
-        /* Stations / Favorites view: normal stacked layout */
-        <div
-          className="flex flex-col bg-background max-w-md mx-auto"
-          style={{ minHeight: "100dvh", paddingBottom: TOOLBAR_HEIGHT }}
-        >
+        /*
+         * Stations / Favorites view:
+         * HUDLayout is a fixed flex column (100dvh).
+         * This inner flex column (flex-1) fills it exactly.
+         * Header, search panel, now-playing are shrink-0.
+         * Station list is flex-1 min-h-0 — the only scrolling region.
+         * Toolbar is shrink-0 at the bottom — always visible, no overlap.
+         */
+        <div className="flex-1 min-h-0 flex flex-col bg-background max-w-md mx-auto w-full">
           {/* Header */}
           <AppHeader
             activeView={activeView}
@@ -335,7 +340,10 @@ export default function App() {
 
           {/* Search panel — key resets internal state each time panel opens */}
           {searchOpen && (
-            <div className="shrink-0 border-b border-border">
+            <div
+              className="shrink-0 border-b border-border overflow-y-auto"
+              style={{ maxHeight: "35dvh" }}
+            >
               <SearchPanel
                 key={searchSession}
                 onSearch={handleSearch}
@@ -345,18 +353,24 @@ export default function App() {
             </div>
           )}
 
-          {/* Now Playing */}
-          <div className="shrink-0 border-b border-transparent">
+          {/* Now Playing — fixed height, never grows */}
+          <div className="shrink-0">
             <NowPlayingPanel
               station={player.currentStation}
               playbackState={player.playbackState}
               streamHealth={player.streamHealth}
               analyserNode={player.analyserNode}
+              isFavorite={
+                !!player.currentStation &&
+                favorites.some((f) => f.name === player.currentStation!.name)
+              }
+              onAddFavorite={handleAddFavorite}
+              onRemoveFavorite={handleRemoveFavorite}
             />
           </div>
 
-          {/* Station list — fills remaining space */}
-          <div className="flex-1 overflow-hidden">
+          {/* Station list — fills all remaining space; scrolls internally */}
+          <div className="flex-1 min-h-0 flex flex-col">
             <StationList
               stations={displayedStations}
               currentStation={player.currentStation}
@@ -375,20 +389,22 @@ export default function App() {
             />
           </div>
 
-          {/* Bottom Toolbar — fixed to viewport bottom */}
-          <BottomToolbar
-            playbackState={player.playbackState}
-            currentStation={player.currentStation}
-            volume={player.volume}
-            theme={theme}
-            onPause={player.pause}
-            onResume={player.resume}
-            onStop={player.stop}
-            onVolumeChange={player.setVolume}
-            onToggleTheme={toggleTheme}
-            isFullscreen={isFullscreen}
-            onToggleFullscreen={toggleFullscreen}
-          />
+          {/* Bottom Toolbar — always at the bottom, never scrolled away */}
+          <div className="shrink-0">
+            <BottomToolbar
+              playbackState={player.playbackState}
+              currentStation={player.currentStation}
+              volume={player.volume}
+              theme={theme}
+              onPause={player.pause}
+              onResume={player.resume}
+              onStop={player.stop}
+              onVolumeChange={player.setVolume}
+              onToggleTheme={toggleTheme}
+              isFullscreen={isFullscreen}
+              onToggleFullscreen={toggleFullscreen}
+            />
+          </div>
         </div>
       )}
 
