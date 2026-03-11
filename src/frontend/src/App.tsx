@@ -312,6 +312,7 @@ export default function App() {
               onToggleTheme={toggleTheme}
               isFullscreen={isFullscreen}
               onToggleFullscreen={toggleFullscreen}
+              amplitude={amplitude}
             />
           </div>
         </div>
@@ -403,6 +404,7 @@ export default function App() {
               onToggleTheme={toggleTheme}
               isFullscreen={isFullscreen}
               onToggleFullscreen={toggleFullscreen}
+              amplitude={amplitude}
             />
           </div>
         </div>

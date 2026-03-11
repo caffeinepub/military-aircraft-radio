@@ -1,28 +1,19 @@
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { Slider } from "@/components/ui/slider";
 import {
-  Info,
   Loader,
   Maximize2,
   Minimize2,
   Moon,
-  MoreHorizontal,
   Pause,
   Play,
-  Share2,
-  Square,
   Sun,
   Volume2,
   VolumeX,
 } from "lucide-react";
-import React, { useState } from "react";
 import type { PlaybackState } from "../hooks/useRadioPlayer";
 import type { Theme } from "../hooks/useTheme";
 import type { RadioStation } from "../services/radioBrowserApi";
+import { MiniGlobe } from "./MiniGlobe";
 
 interface BottomToolbarProps {
   playbackState: PlaybackState;
@@ -36,6 +27,7 @@ interface BottomToolbarProps {
   onToggleTheme: () => void;
   isFullscreen?: boolean;
   onToggleFullscreen?: () => void;
+  amplitude?: number;
 }
 
 export function BottomToolbar({
@@ -45,170 +37,134 @@ export function BottomToolbar({
   theme,
   onPause,
   onResume,
-  onStop,
+  onStop: _onStop,
   onVolumeChange,
   onToggleTheme,
   isFullscreen = false,
   onToggleFullscreen,
+  amplitude = 0,
 }: BottomToolbarProps) {
-  const [meatballOpen, setMeatballOpen] = useState(false);
-  const [copied, setCopied] = useState(false);
-
   const isPlaying = playbackState === "playing";
   const isLoading = playbackState === "loading";
   const hasStation = currentStation !== null;
 
-  const handleShare = async () => {
-    const url = currentStation
-      ? `${window.location.origin}?station=${encodeURIComponent(currentStation.name)}`
-      : window.location.href;
-    try {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // fallback
+  const handlePlayPause = () => {
+    if (isPlaying) {
+      onPause();
+    } else if (hasStation) {
+      onResume();
     }
-    setMeatballOpen(false);
   };
 
   return (
-    <div className="border-t border-neutral-border bg-background px-4 py-2.5 flex items-center justify-between gap-3 z-40">
+    <div
+      data-ocid="toolbar.panel"
+      className="border-t border-neutral-border bg-background px-5 py-3 flex items-center justify-between gap-4 z-40"
+    >
       {/* Left: Volume */}
-      <div className="flex items-center gap-2 flex-1">
+      <div className="flex items-center gap-3 flex-1">
         <button
           type="button"
+          data-ocid="toolbar.toggle"
           onClick={() => onVolumeChange(volume > 0 ? 0 : 0.8)}
-          className="text-dim hover:text-foreground transition-colors p-1 shrink-0"
+          className="text-dim hover:text-foreground transition-colors p-1.5 shrink-0"
           aria-label={volume === 0 ? "Unmute" : "Mute"}
         >
-          {volume === 0 ? <VolumeX size={14} /> : <Volume2 size={14} />}
+          {volume === 0 ? <VolumeX size={20} /> : <Volume2 size={20} />}
         </button>
-        <div className="w-20">
+        <div className="w-24">
           <Slider
             value={[volume * 100]}
             onValueChange={([v]) => onVolumeChange(v / 100)}
             min={0}
             max={100}
             step={1}
-            className="h-1"
+            className="h-1.5"
           />
         </div>
       </div>
 
-      {/* Center: Stop + Play/Pause */}
-      <div className="flex items-center gap-2 shrink-0">
-        {/* Stop */}
-        <button
-          type="button"
-          onClick={onStop}
-          disabled={!hasStation}
-          className="text-dim p-1.5 rounded hover:text-foreground hover:bg-neutral-hover transition-colors disabled:opacity-20 disabled:cursor-not-allowed"
-          aria-label="Stop"
-        >
-          <Square size={13} />
-        </button>
-
-        {/* Play/Pause */}
+      {/* Center: Spectacular Play/Pause Globe Button */}
+      <div className="flex items-center shrink-0">
         {isLoading ? (
-          <button
-            type="button"
-            disabled
-            className="text-dim p-2 rounded"
+          <div
+            className="flex items-center justify-center rounded-full bg-neutral-active"
+            style={{ width: 64, height: 64 }}
             aria-label="Loading"
           >
-            <Loader size={16} className="animate-spin" />
-          </button>
-        ) : isPlaying ? (
-          <button
-            type="button"
-            onClick={onPause}
-            className="text-foreground p-2 rounded bg-neutral-active hover:bg-neutral-hover transition-colors"
-            aria-label="Pause"
-          >
-            <Pause size={16} />
-          </button>
+            <Loader size={24} className="animate-spin text-foreground" />
+          </div>
         ) : (
           <button
             type="button"
-            onClick={onResume}
-            disabled={!hasStation}
-            className="text-dim p-2 rounded hover:text-foreground hover:bg-neutral-hover transition-colors disabled:opacity-20 disabled:cursor-not-allowed"
-            aria-label="Play"
+            data-ocid="toolbar.primary_button"
+            onClick={handlePlayPause}
+            disabled={!hasStation && !isPlaying}
+            aria-label={isPlaying ? "Pause" : "Play"}
+            className="relative flex items-center justify-center rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-foreground/30 disabled:opacity-30 disabled:cursor-not-allowed group"
+            style={{
+              width: 64,
+              height: 64,
+              background: isPlaying
+                ? "transparent"
+                : "oklch(var(--foreground) / 0.08)",
+              border: isPlaying
+                ? "2px solid rgba(100, 160, 255, 0.55)"
+                : "2px solid oklch(var(--foreground) / 0.18)",
+            }}
           >
-            <Play size={16} />
+            {isPlaying ? (
+              <>
+                {/* 3D globe fills the button */}
+                <div className="absolute inset-0 rounded-full overflow-hidden">
+                  <MiniGlobe size={60} amplitude={amplitude} />
+                </div>
+                {/* Pause overlay — fades in on hover */}
+                <div className="absolute inset-0 rounded-full flex items-center justify-center bg-black/0 group-hover:bg-black/40 transition-all duration-200">
+                  <Pause
+                    size={22}
+                    className="text-white opacity-0 group-hover:opacity-100 drop-shadow-lg transition-opacity duration-200"
+                  />
+                </div>
+              </>
+            ) : (
+              <Play size={26} className="text-foreground translate-x-0.5" />
+            )}
           </button>
         )}
       </div>
 
-      {/* Right: Fullscreen + Theme + Menu */}
-      <div className="flex items-center gap-1 flex-1 justify-end">
+      {/* Right: Fullscreen + Theme */}
+      <div className="flex items-center gap-3 flex-1 justify-end">
         {/* Fullscreen toggle */}
         {onToggleFullscreen && (
           <button
             type="button"
+            data-ocid="toolbar.toggle"
             onClick={onToggleFullscreen}
-            className={`p-1.5 rounded transition-colors ${
+            className={`p-2 rounded-lg transition-colors ${
               isFullscreen
                 ? "text-foreground bg-neutral-active"
                 : "text-dim hover:text-foreground hover:bg-neutral-hover"
             }`}
             aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
           >
-            {isFullscreen ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
+            {isFullscreen ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
           </button>
         )}
 
         {/* Dark/Light toggle */}
         <button
           type="button"
+          data-ocid="toolbar.toggle"
           onClick={onToggleTheme}
-          className="text-dim hover:text-foreground transition-colors p-1.5 rounded hover:bg-neutral-hover"
+          className="text-dim hover:text-foreground transition-colors p-2 rounded-lg hover:bg-neutral-hover"
           aria-label={
             theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
           }
         >
-          {theme === "dark" ? <Sun size={13} /> : <Moon size={13} />}
+          {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
         </button>
-
-        {/* Meatball menu */}
-        <Popover open={meatballOpen} onOpenChange={setMeatballOpen}>
-          <PopoverTrigger asChild>
-            <button
-              type="button"
-              className="text-dim hover:text-foreground transition-colors p-1.5 rounded hover:bg-neutral-hover"
-              aria-label="More options"
-            >
-              <MoreHorizontal size={13} />
-            </button>
-          </PopoverTrigger>
-          <PopoverContent
-            side="top"
-            align="end"
-            className="w-44 p-1 bg-neutral-panel border border-neutral-border rounded"
-          >
-            <button
-              type="button"
-              onClick={handleShare}
-              className="w-full flex items-center gap-2 px-3 py-2 text-xs text-dim hover:text-foreground hover:bg-neutral-hover transition-colors text-left rounded"
-            >
-              <Share2 size={11} />
-              {copied ? "Copied!" : "Share station"}
-            </button>
-            <div className="border-t border-neutral-border my-1" />
-            <div className="px-3 py-2 text-[11px] text-dim">
-              <div className="flex items-center gap-2 mb-1">
-                <Info size={10} />
-                <span className="font-medium text-foreground/60 text-[10px] tracking-wide">
-                  About
-                </span>
-              </div>
-              <p className="opacity-60 leading-relaxed text-[10px]">
-                Antenna — internet radio. Powered by Radio Browser API.
-              </p>
-            </div>
-          </PopoverContent>
-        </Popover>
       </div>
     </div>
   );
