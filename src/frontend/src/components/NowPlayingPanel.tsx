@@ -3,7 +3,6 @@ import type React from "react";
 import { useEffect, useRef, useState } from "react";
 import type { PlaybackState, StreamHealth } from "../hooks/useRadioPlayer";
 import type { RadioStation } from "../services/radioBrowserApi";
-import { AudioVisualizer } from "./AudioVisualizer";
 
 const SLOGANS = [
   "Satellite prices. Basement quality.",
@@ -51,7 +50,6 @@ interface NowPlayingPanelProps {
   onRemoveFavorite?: (stationName: string) => void;
 }
 
-/** Hook to check if a text element overflows its container */
 function useMarquee(deps: unknown[]) {
   const containerRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLSpanElement>(null);
@@ -75,7 +73,6 @@ function useMarquee(deps: unknown[]) {
     };
     const t = setTimeout(check, 80);
     return () => clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 
   return { containerRef, textRef, needsScroll, marqueeOffset };
@@ -85,7 +82,6 @@ export function NowPlayingPanel({
   station,
   playbackState,
   streamHealth,
-  analyserNode,
   isFavorite = false,
   onAddFavorite,
   onRemoveFavorite,
@@ -110,35 +106,10 @@ export function NowPlayingPanel({
     return () => clearInterval(interval);
   }, []);
 
-  // Marquee for station name
   const nameMarquee = useMarquee([station?.name]);
-  // Marquee for secondary info
-  const infoMarquee = useMarquee([
-    station?.name,
-    station?.tags,
-    station?.country,
-  ]);
-  // Marquee for slogan
   const sloganMarquee = useMarquee([sloganIndex]);
 
-  // Build secondary info string
-  const secondaryParts: string[] = [];
-  if (station?.country) secondaryParts.push(station.country);
-  if (station?.tags) {
-    const tagList = station.tags
-      .split(",")
-      .map((t) => t.trim())
-      .filter(Boolean)
-      .slice(0, 3)
-      .join(" · ");
-    if (tagList) secondaryParts.push(tagList);
-  }
-  if (station?.bitrate && station.bitrate > 0)
-    secondaryParts.push(`${station.bitrate}kbps`);
-  const secondaryInfo = secondaryParts.join(" · ");
-
   const [imgError, setImgError] = useState(false);
-  // Reset img error when station changes
   // biome-ignore lint/correctness/useExhaustiveDependencies: intentional reset
   useEffect(() => {
     setImgError(false);
@@ -146,55 +117,54 @@ export function NowPlayingPanel({
 
   const statusLabel =
     streamHealth === "reconnecting"
-      ? "Reconnecting"
+      ? "Reconnecting…"
       : streamHealth === "failed"
         ? "No signal"
         : isPlaying
-          ? "LIVE"
+          ? "Live"
           : isLoading
-            ? "Connecting"
+            ? "Connecting…"
             : playbackState === "paused"
               ? "Paused"
               : playbackState === "error"
                 ? "Error"
-                : "";
+                : null;
+
+  const statusColor =
+    streamHealth === "failed" || playbackState === "error"
+      ? "text-destructive"
+      : isPlaying
+        ? "text-primary"
+        : "text-dim";
 
   return (
-    <div className="px-3 py-2.5 flex items-center gap-3 min-h-[56px]">
+    <div className="px-4 flex items-center gap-3" style={{ height: "68px" }}>
       {station ? (
         <>
-          {/* Station thumbnail with LIVE badge */}
-          <div className="relative shrink-0">
-            <div className="w-9 h-9 rounded-lg overflow-hidden bg-neutral-hover flex items-center justify-center">
-              {station.favicon && !imgError ? (
-                <img
-                  src={station.favicon}
-                  alt=""
-                  className="w-full h-full object-cover"
-                  onError={() => setImgError(true)}
-                />
-              ) : (
-                <Radio size={16} className="text-dim" />
-              )}
-            </div>
-            {/* LIVE badge */}
-            {isPlaying && (
-              <span className="absolute -bottom-1 -right-1 px-1 py-0 rounded text-[8px] font-bold tracking-wider bg-primary text-primary-foreground leading-tight">
-                LIVE
-              </span>
+          {/* Thumbnail */}
+          <div className="shrink-0 w-10 h-10 rounded-lg overflow-hidden bg-neutral-hover flex items-center justify-center">
+            {station.favicon && !imgError ? (
+              <img
+                src={station.favicon}
+                alt=""
+                className="w-full h-full object-cover"
+                onError={() => setImgError(true)}
+              />
+            ) : (
+              <Radio size={18} className="text-dim" />
             )}
           </div>
 
-          {/* Station name + secondary info */}
+          {/* Text block */}
           <div className="flex-1 min-w-0 flex flex-col justify-center gap-0.5">
-            {/* Station name marquee */}
+            {/* Station name */}
             <div
               ref={nameMarquee.containerRef}
               className="slogan-scroll-container w-full"
             >
               <span
                 ref={nameMarquee.textRef}
-                className={`text-[13px] font-semibold text-foreground slogan-scroll-text${
+                className={`text-[14px] font-semibold text-foreground leading-tight slogan-scroll-text${
                   nameMarquee.needsScroll ? " needs-scroll" : ""
                 }`}
                 style={
@@ -208,64 +178,32 @@ export function NowPlayingPanel({
               </span>
             </div>
 
-            {/* Secondary info row: status + scrolling meta */}
-            <div className="flex items-center gap-1.5 min-w-0">
-              {/* Status indicator */}
-              {(isPlaying ||
-                isLoading ||
-                streamHealth === "failed" ||
-                streamHealth === "reconnecting") && (
-                <span
-                  className={`shrink-0 text-[9px] font-bold tracking-widest uppercase ${
-                    isPlaying
-                      ? "text-primary"
-                      : streamHealth === "failed"
-                        ? "text-destructive"
-                        : "text-dim"
-                  }`}
-                >
-                  {streamHealth === "reconnecting" ? (
-                    <span className="flex items-center gap-0.5">
-                      <RefreshCw size={8} className="animate-spin" />
-                      {statusLabel}
-                    </span>
-                  ) : streamHealth === "failed" ? (
-                    <span className="flex items-center gap-0.5">
-                      <WifiOff size={8} />
-                      {statusLabel}
-                    </span>
-                  ) : (
-                    statusLabel
-                  )}
-                </span>
-              )}
-
-              {/* Scrolling secondary info */}
-              {secondaryInfo && (
-                <div
-                  ref={infoMarquee.containerRef}
-                  className="slogan-scroll-container flex-1 min-w-0"
-                >
+            {/* Status line */}
+            {statusLabel && (
+              <div className="flex items-center gap-1">
+                {streamHealth === "reconnecting" && (
+                  <RefreshCw
+                    size={9}
+                    className={`${statusColor} animate-spin`}
+                  />
+                )}
+                {streamHealth === "failed" && (
+                  <WifiOff size={9} className={statusColor} />
+                )}
+                {isPlaying && streamHealth === "healthy" && (
                   <span
-                    ref={infoMarquee.textRef}
-                    className={`text-[10px] text-dim slogan-scroll-text${
-                      infoMarquee.needsScroll ? " needs-scroll" : ""
-                    }`}
-                    style={
-                      {
-                        "--marquee-offset": infoMarquee.marqueeOffset,
-                        animationDuration: "10s",
-                      } as React.CSSProperties
-                    }
-                  >
-                    {secondaryInfo}
-                  </span>
-                </div>
-              )}
-            </div>
+                    className="inline-block w-1.5 h-1.5 rounded-full bg-primary"
+                    aria-hidden="true"
+                  />
+                )}
+                <span className={`text-[11px] tracking-wide ${statusColor}`}>
+                  {statusLabel}
+                </span>
+              </div>
+            )}
           </div>
 
-          {/* Favorite toggle */}
+          {/* Favorite */}
           <button
             type="button"
             data-ocid="now-playing.toggle"
@@ -279,36 +217,26 @@ export function NowPlayingPanel({
                 onAddFavorite?.(station);
               }
             }}
-            className="shrink-0 p-1.5 rounded transition-colors hover:bg-neutral-hover"
+            className="shrink-0 p-2 rounded-lg transition-colors hover:bg-neutral-hover"
           >
             <Star
-              size={16}
+              size={18}
               className={
                 isFavorite ? "fill-foreground text-foreground" : "text-dim"
               }
             />
           </button>
-
-          {/* Visualizer */}
-          <div className="shrink-0">
-            <AudioVisualizer
-              analyserNode={analyserNode}
-              isActive={isPlaying}
-              className="opacity-80"
-              style={{ width: 48, height: 24 }}
-            />
-          </div>
         </>
       ) : (
-        /* Idle state — slogan only */
-        <div className="flex-1 min-w-0 flex items-center">
+        /* Idle — slogan centered */
+        <div className="flex-1 min-w-0 flex items-center justify-center">
           <div
             ref={sloganMarquee.containerRef}
-            className="slogan-scroll-container w-full"
+            className="slogan-scroll-container w-full text-center"
           >
             <span
               ref={sloganMarquee.textRef}
-              className={`text-[11px] text-dim italic slogan-scroll-text${
+              className={`text-[12px] text-dim italic slogan-scroll-text${
                 sloganMarquee.needsScroll ? " needs-scroll" : ""
               }`}
               style={
