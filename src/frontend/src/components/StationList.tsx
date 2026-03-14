@@ -79,6 +79,29 @@ function SourceBanner({ source }: { source: StationSource }) {
   );
 }
 
+/** Always occupies a fixed 16×16 slot. Shows favicon if available/loads; falls back to Radio icon. */
+function StationFavicon({ favicon }: { favicon?: string }) {
+  return (
+    <div className="w-4 h-4 shrink-0 relative flex items-center justify-center">
+      {/* Fallback icon — always present, hidden by the image when loaded */}
+      <Radio
+        size={11}
+        className="text-dim opacity-25 absolute inset-0 m-auto"
+      />
+      {favicon && (
+        <img
+          src={favicon}
+          alt=""
+          className="w-4 h-4 object-contain relative z-10 opacity-50"
+          onError={(e) => {
+            (e.target as HTMLImageElement).style.display = "none";
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
 export function StationList({
   stations,
   currentStation,
@@ -190,19 +213,8 @@ export function StationList({
                 )}
               </div>
 
-              {/* Favicon */}
-              {station.favicon ? (
-                <img
-                  src={station.favicon}
-                  alt=""
-                  className="w-4 h-4 object-contain shrink-0 opacity-50"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = "none";
-                  }}
-                />
-              ) : (
-                <Radio size={11} className="text-dim shrink-0 opacity-25" />
-              )}
+              {/* Favicon — always consistent width, Radio icon fallback */}
+              <StationFavicon favicon={station.favicon} />
 
               {/* Station info */}
               <div className="flex-1 min-w-0">
