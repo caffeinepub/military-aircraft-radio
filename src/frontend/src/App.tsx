@@ -5,7 +5,7 @@ import { BottomToolbar } from "./components/BottomToolbar";
 import { FullscreenOverlay } from "./components/FullscreenOverlay";
 import GlobeView from "./components/GlobeView";
 import { HUDLayout } from "./components/HUDLayout";
-import { NowPlayingPanel } from "./components/NowPlayingPanel";
+import { NowPlayingBar } from "./components/NowPlayingBar";
 import { SearchPanel } from "./components/SearchPanel";
 import { StationList } from "./components/StationList";
 import {
@@ -50,23 +50,33 @@ export default function App() {
 
   const animFrameRef = useRef<number>(0);
   const analyserRef = useRef<AnalyserNode | null>(null);
+  // Throttle amplitude to ~10fps to prevent 60fps re-renders that break scroll
+  const lastAmpTimeRef = useRef<number>(0);
+  const lastAmpValueRef = useRef<number>(0);
 
   useEffect(() => {
     analyserRef.current = player.analyserNode;
   }, [player.analyserNode]);
 
   useEffect(() => {
-    function tick() {
+    function tick(time: number) {
       const analyser = analyserRef.current;
+      let newAmp = 0;
       if (analyser && player.playbackState === "playing") {
         const data = new Uint8Array(analyser.frequencyBinCount);
         analyser.getByteFrequencyData(data);
         let sum = 0;
         for (let i = 0; i < data.length; i++) sum += data[i];
-        const avg = sum / data.length / 255;
-        setAmplitude(avg);
-      } else {
-        setAmplitude(0);
+        newAmp = sum / data.length / 255;
+      }
+      // Only update state at ~10fps and only when value changes meaningfully
+      if (
+        time - lastAmpTimeRef.current >= 100 &&
+        Math.abs(newAmp - lastAmpValueRef.current) > 0.01
+      ) {
+        lastAmpTimeRef.current = time;
+        lastAmpValueRef.current = newAmp;
+        setAmplitude(newAmp);
       }
       animFrameRef.current = requestAnimationFrame(tick);
     }
@@ -102,7 +112,6 @@ export default function App() {
   const stations: RadioStation[] = stationsResult?.stations ?? [];
   const stationSource: StationSource = stationsResult?.source ?? "live";
 
-  // Dedicated globe stations query — fetches a broad geographic set of 500 stations
   const {
     data: globeStations = [],
     isError: globeError,
@@ -147,24 +156,19 @@ export default function App() {
     const isBrowserFullscreen = !!(
       document.fullscreenElement || (document as any).webkitFullscreenElement
     );
-
     if (!isBrowserFullscreen) {
-      // Request native fullscreen
       try {
         if (document.documentElement.requestFullscreen) {
           await document.documentElement.requestFullscreen();
         } else if ((document.documentElement as any).webkitRequestFullscreen) {
           await (document.documentElement as any).webkitRequestFullscreen();
         } else {
-          // iOS Safari / unsupported: fall back to overlay-only mode
           setIsFullscreen(true);
         }
       } catch {
-        // Browser blocked the request (e.g. iOS Safari) — use overlay mode
         setIsFullscreen(true);
       }
     } else {
-      // Exit native fullscreen
       if (document.exitFullscreen) {
         document.exitFullscreen().catch(() => {});
       } else if ((document as any).webkitExitFullscreen) {
@@ -173,7 +177,6 @@ export default function App() {
     }
   }, []);
 
-  // Sync React state with native fullscreen changes (Escape key, browser chrome, etc.)
   useEffect(() => {
     const handleFullscreenChange = () => {
       const isBrowserFullscreen = !!(
@@ -181,10 +184,8 @@ export default function App() {
       );
       setIsFullscreen(isBrowserFullscreen);
     };
-
     document.addEventListener("fullscreenchange", handleFullscreenChange);
     document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
-
     return () => {
       document.removeEventListener("fullscreenchange", handleFullscreenChange);
       document.removeEventListener(
@@ -206,7 +207,6 @@ export default function App() {
     refetchGlobe();
   }, [queryClient, refetchGlobe]);
 
-  // Convert backend Station[] favorites to RadioStation[] for StationList / GlobeView
   const favoritesAsRadio: RadioStation[] = favorites.map((f) => ({
     stationuuid: f.name,
     name: f.name,
@@ -228,9 +228,6 @@ export default function App() {
     activeView === "stations" ? stations : favoritesAsRadio;
   const isLoadingList =
     activeView === "stations" ? stationsLoading : favoritesLoading;
-  // Since the service now returns cache/hardcoded instead of throwing, isError
-  // will only be true for unexpected React Query errors (network-level failures
-  // that bypass our service layer). We still pass it through for safety.
   const isErrorList = activeView === "stations" ? stationsError : false;
   const errorMessage =
     activeView === "stations"
@@ -240,25 +237,15 @@ export default function App() {
     activeView === "stations"
       ? "No stations found — try a different search"
       : "No saved stations yet";
-
-  // Only show source banner for the stations view (not favorites)
   const displayedSource: StationSource =
     activeView === "stations" ? stationSource : "live";
-
-  // Globe shows the dedicated broad-coverage fetch; fall back to search results if a search is active
   const globeDisplayStations = hasSearch ? stations : globeStations;
   const isGlobeError = !hasSearch && globeError;
 
   return (
     <HUDLayout>
       {activeView === "globe" ? (
-        /*
-         * Globe view:
-         * HUDLayout is a fixed flex column (100dvh).
-         * This container fills it (flex-1) and layers header + globe + toolbar.
-         */
         <div className="relative flex-1 min-h-0 w-full overflow-hidden">
-          {/* Globe fills the entire container */}
           {isGlobeError ? (
             <div className="flex flex-col items-center justify-center w-full h-full gap-3 px-6 text-center bg-background">
               <p className="text-sm text-foreground/70">
@@ -282,8 +269,6 @@ export default function App() {
               currentStation={player.currentStation}
             />
           )}
-
-          {/* Header overlaid on top of globe */}
           <div className="absolute top-0 left-0 right-0 z-20">
             <AppHeader
               activeView={activeView}
@@ -297,8 +282,6 @@ export default function App() {
               hasActiveSearch={!!hasSearch}
             />
           </div>
-
-          {/* Bottom Toolbar overlaid on top of globe */}
           <div className="absolute bottom-0 left-0 right-0 z-20">
             <BottomToolbar
               playbackState={player.playbackState}
@@ -317,16 +300,7 @@ export default function App() {
           </div>
         </div>
       ) : (
-        /*
-         * Stations / Favorites view:
-         * HUDLayout is a fixed flex column (100dvh).
-         * This inner flex column (flex-1) fills it exactly.
-         * Header, search panel, now-playing are shrink-0.
-         * Station list is flex-1 min-h-0 — the only scrolling region.
-         * Toolbar is shrink-0 at the bottom — always visible, no overlap.
-         */
         <div className="flex-1 min-h-0 flex flex-col bg-background max-w-md mx-auto w-full">
-          {/* Header */}
           <AppHeader
             activeView={activeView}
             onViewChange={(v) => setActiveView(v as ActiveView)}
@@ -339,7 +313,6 @@ export default function App() {
             hasActiveSearch={!!hasSearch}
           />
 
-          {/* Search panel — key resets internal state each time panel opens */}
           {searchOpen && (
             <div
               className="shrink-0 border-b border-border overflow-y-auto"
@@ -354,9 +327,8 @@ export default function App() {
             </div>
           )}
 
-          {/* Now Playing — fixed height, never grows */}
           <div className="shrink-0">
-            <NowPlayingPanel
+            <NowPlayingBar
               station={player.currentStation}
               playbackState={player.playbackState}
               streamHealth={player.streamHealth}
@@ -370,8 +342,8 @@ export default function App() {
             />
           </div>
 
-          {/* Station list — fills all remaining space; scrolls internally */}
-          <div className="flex-1 min-h-0 flex flex-col">
+          {/* Station list — flex-1 min-h-0 with overflow-y-auto directly: the scrollable region */}
+          <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
             <StationList
               stations={displayedStations}
               currentStation={player.currentStation}
@@ -390,7 +362,6 @@ export default function App() {
             />
           </div>
 
-          {/* Bottom Toolbar — always at the bottom, never scrolled away */}
           <div className="shrink-0">
             <BottomToolbar
               playbackState={player.playbackState}
@@ -410,7 +381,6 @@ export default function App() {
         </div>
       )}
 
-      {/* Fullscreen Overlay — always rendered outside layout containers */}
       <FullscreenOverlay
         isOpen={isFullscreen}
         onClose={() => setIsFullscreen(false)}

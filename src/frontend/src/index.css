@@ -173,7 +173,49 @@ input:-webkit-autofill:focus {
   animation-duration: 300ms;
 }
 
-/* Marquee scroll for long slogans */
+/* ─── Broadcast ticker / seamless marquee ─── */
+@keyframes marquee-continuous {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/*
+  Container: strict single-line clipping box.
+  height + line-height lock it to exactly one text line.
+*/
+.marquee-container {
+  overflow: hidden;
+  width: 100%;
+  min-width: 0;
+  /* Use px so height is never ambiguous regardless of inherited font-size */
+  height: 20px;
+  line-height: 20px;
+  display: block;
+  flex-shrink: 0;
+}
+
+.marquee-track {
+  display: inline-block;
+  white-space: nowrap;
+  will-change: transform;
+  animation: marquee-continuous 18s linear infinite;
+  line-height: 20px;
+  /* Guarantee single line — never let the track wrap */
+  overflow: hidden;
+  vertical-align: top;
+}
+
+.marquee-track span {
+  display: inline;
+  white-space: nowrap;
+  vertical-align: top;
+}
+
+/* ─── Legacy marquee classes — kept for other components ─── */
 @keyframes marquee-scroll {
   0% {
     transform: translateX(0%);
